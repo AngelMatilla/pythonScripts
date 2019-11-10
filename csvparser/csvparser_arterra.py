@@ -23,13 +23,13 @@ else:
 	exit()
 
 dictionary = dict()
-data = [["Fecha", "Concepto", "Entrada", "Salida"]]
+data = [["Fecha", "Caja", "Método", "Círculo/Área", "Persona", "Fuego", "Proyecto", "Concepto", "Entrada", "Salida"]]
 for row in reader:
 	date = datetime.strptime(row['F. valor'],"%d/%m/%Y").date()
 	if float(row['Importe'].replace(',','.')) > 0:
-		array = [date, row['Concepto'], float(row['Importe'].replace(',','.')),""]
+		array = [date, "", "Banco", "", "", "", "", row['Concepto'], float(row['Importe'].replace(',','.')),""]
 	else:
-		array = [date, row['Concepto'], "",abs(float(row['Importe'].replace(',','.')))]
+		array = [date, "", "Banco", "", "", "", "", row['Concepto'], "",abs(float(row['Importe'].replace(',','.')))]
 	print(array)
 	data.append(array)
 dictionary.update({"Sheet 1": data})

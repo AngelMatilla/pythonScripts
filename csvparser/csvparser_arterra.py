@@ -22,6 +22,7 @@ if len(sys.argv) != 3:
 	exit()
 if '.csv' in sys.argv[1]:
 	reader = csv.DictReader(open(sys.argv[1]))
+	lines = [x for x in reader]
 else:
 	print ("Please enter a csv formatted file as input (with extension .csv)")
 	exit()
@@ -36,7 +37,7 @@ else:
 
 dictionary = dict()
 data = [["Fecha", "Caja", "Método", "Círculo/Área", "Persona", "Fuego", "Proyecto", "Concepto", "Entrada", "Salida"]]
-for row in reader:
+for row in lines[::-1]:
 	date = datetime.strptime(row['F. valor'],"%d/%m/%Y").date()
 	# generate array
 	array = [date, "", "Banco", "", "", "", "", row['Concepto'], "",""]
@@ -48,18 +49,44 @@ for row in reader:
 	# rule ab1.fuego.VmonthXXX.CmonthYYY.PmonthZZZ
 	if "ab1" in row['Concepto'].casefold():
 		parts = row['Concepto'].casefold().split('.')
-		print(parts)
+		# find fuego in list
 		name = parts[0].split()
-		print(name[2])
 		if any(name[2] in s for s in fuegos_lower):
 			matching = [s for s in fuegos_lower if name[2] in s]
 			array[5] = fuegos[fuegos_lower.index(matching[0])]
-			print("found")
-			print(array[5])
-	if "ab1" in row['Concepto'].casefold() or "alquiler" in row['Concepto'].lower():
+			array[1] = "Gasto"
+			array[3] = "Alquiler vivienda"
+	# rule fanny (Enero C/ Abajo 1,1o) and word alquiler or renta
+	if "abajo 1,1o" in row['Concepto'].casefold() or "alquiler" in row['Concepto'].casefold() or "renta" in row['Concepto'].casefold() or "mensualidad" in row['Concepto'].casefold():
 		array[1] = "Gasto"
 		array[3] = "Alquiler vivienda"
-	# print(array)
+		# TODO: add fuego 
+	# rule caldera
+	if "huesillo" in row['Concepto'].casefold():
+		array[1] = "Gasto"
+		array[3] = "Calefacción"
+	# rule agua
+	if "tasa de agua" in row['Concepto'].casefold():
+		array[1] = "Gasto"
+		array[3] = "Agua"
+	# rule telefonia
+	if "telefonica de espana" in row['Concepto'].casefold() or "sisnet" in row['Concepto'].casefold():
+		array[1] = "Gasto"
+		array[3] = "Internet y teléfono"
+	# rule pedidos comedor
+	if "gumiel y mendia" in row['Concepto'].casefold():
+		array[1] = "Comedor"
+		array[3] = "Pedidos"
+	# rule electricidad
+	if "som energia" in row['Concepto'].casefold():
+		array[1] = "Gasto"
+		array[3] = "Electricidad término fijo"
+		# TODO: create additional line for variable term
+	# rule pagos cuotas comedor
+	if "comedor" in row['Concepto'].casefold():
+		array[1] = "Comedor"
+		array[3] = "Cuotas comedor"
+	print(array)
 	data.append(array)
 dictionary.update({"Sheet 1": data})
 save_data(sys.argv[2], dictionary)

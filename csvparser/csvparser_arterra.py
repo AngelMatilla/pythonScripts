@@ -15,6 +15,9 @@ for index, s in enumerate(fuegos, start = 1):
 	# Tom es ahora Tomas Feeney
 	if "Jess y Tom" in s:
 		s = "Jess y Tomas Feeney"
+	# Peppe es ahora Giuseppe
+	if "Stefania y Peppe" in s:
+		s = "Stefania y Giuseppe"
 	fuegos_lower.insert(index,unidecode.unidecode(s.casefold()))
 
 if len(sys.argv) != 3:
@@ -73,6 +76,10 @@ for row in lines[::-1]:
 	if "telefonica de espana" in row['Concepto'].casefold() or "sisnet" in row['Concepto'].casefold():
 		array[1] = "Gasto"
 		array[3] = "Internet y teléfono"
+	# rule garbileku
+	if "garbileku" in row['Concepto'].casefold():
+		array[1] = "Gasto"
+		array[3] = "Aterpe"
 	# rule pedidos comedor
 	if "gumiel y mendia" in row['Concepto'].casefold():
 		array[1] = "Comedor"
@@ -86,6 +93,12 @@ for row in lines[::-1]:
 	if "comedor" in row['Concepto'].casefold():
 		array[1] = "Comedor"
 		array[3] = "Cuotas comedor"
+	# rule GEN
+	if "global ecovillage network of europe" in row['Concepto'].casefold() or "GLOBAL ECOV.NETW.EUROPE".casefold() in row['Concepto'].casefold():
+		array[6] = "GEN"
+	# rule Ecohabitar
+	if "ecohabitar" in row['Concepto'].casefold():
+		array[6] = "Ecohabitar"
 	print(array)
 	data.append(array)
 dictionary.update({"Sheet 1": data})

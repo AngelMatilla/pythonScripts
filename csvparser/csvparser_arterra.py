@@ -8,8 +8,8 @@ import logging
 from datetime import datetime
 from pyexcel_ods3 import save_data
 
-fuegos = ["Ana","Angel","Fanny y Adrián","Genny","Lide y Montxo","Lorena","Lurdes y Christian","Maria","Marta","Mauge","Miracles y Toni","Nadia","Silbia","Valen","Isa y Nahia","Alf","Jess y Tom","Stefania y Peppe"]
-personas = ["Ana","Angel","Fanny","Genny","Lide","Lorena","Lurdes","Maria","Marta","Mauge","Miracles","Nadia","Silbia","Valen","Isa","Alf","Jess","Stefania"]
+fuegos = ["Ana","Angel","Fanny y Adrián","Genny","Lide y Montxo","Lorena","Lurdes y Christian","Maria","Marta","Mauge","Miracles y Toni","Nadia","Silbia","Valen","Isa y Nahia","Alf","Jess y Tom","Stefania y Peppe","Leona y Carlos"]
+personas = ["Ana","Angel","Fanny","Genny","Lide","Lorena","Lurdes","Maria","Marta","Mauge","Miracles","Nadia","Silbia","Valen","Isa","Alf","Jess","Stefania","Carlos"]
 months = ["ene" , "feb" , "mar", "abr", "may", "jun" , "jul" , "ago" , "sep" , "oct" , "nov" , "dic"]
 fuegos_lower = []
 personas_lower = []
@@ -26,6 +26,9 @@ for index, s in enumerate(fuegos, start = 1):
 	# Valen es ahora Valentin
 	if "Valen" in s:
 		s = "Juan Valentin Ruiz Lopez"
+	# Carlos es ahora Martinez Mampay Carlos Alberto
+	if "Leona y Carlos" in s:
+		s = "Leona y Martinez Mampay Carlos Alberto"
 	fuegos_lower.insert(index,unidecode.unidecode(s.casefold()))
 for index, s in enumerate(personas, start = 1):
 	personas_lower.insert(index,unidecode.unidecode(s.casefold()))
@@ -73,9 +76,10 @@ for row in lines[::-1]:
 			# check if sum of quantity elements is correct
 			total_sum = 0
 			for x in parts[2::]:
-				numbers = re.findall(r"[-]?[\d]+[\.,]?\d*",x)
-				for i in numbers:
-					total_sum += float(i.replace(',','.'))
+				if ((((x.lstrip())[0] == "v") or ((x.lstrip())[0] == "c") or ((x.lstrip())[0] == "p")) and (((x.lstrip())[1] == ":") or any((x.lstrip())[1:4] in r for r in months))):
+					numbers = re.findall(r"[-]?[\d]+[\.,]?\d*",x)
+					for i in numbers:
+						total_sum += float(i.replace(',','.'))
 			if (total_sum != float(row['Importe'].replace(',','.'))):
 				raise Exception('Total sum of quantity elements is not correctly calculated:  {}'.format(parts))
 
@@ -156,7 +160,9 @@ for row in lines[::-1]:
 						extra_array[q][4] = personas[index]
 						extra_array[q][5] = ""
 					else:
-						raise Exception('badly formatted string. First letter of a quantity element wrong:  {}'.format(parts))
+						print('WARNING: badly formatted string. Skipping quantity element:  {}'.format(x))
+						extra_array.remove(extra_array[q])
+						continue
 					
 					# read number in other quantity element
 					if (x.lstrip())[1] == ":":
@@ -174,7 +180,8 @@ for row in lines[::-1]:
 						else: 
 							extra_array[q][9] = abs(float(numbers[0].replace(',','.')))
 					else: 
-						raise Exception('badly formatted string:  {}'.format(parts))
+						print('WARNING: badly formatted string. Skipping quantity element:  {}'.format(x))
+						continue
 
 		except Exception as exception:
 			print("***********************")
@@ -214,7 +221,9 @@ for row in lines[::-1]:
 	if "som energia" in row['Concepto'].casefold():
 		array[1] = "Gasto"
 		array[3] = "Electricidad término fijo"
-		# TODO: create additional line for variable term
+		# create additional line for variable term
+		extra_array.append(array.copy())
+		extra_array[0][3] = "Electricidad término variable"
 	# rule pagos cuotas comedor
 	if "comedor" in row['Concepto'].casefold():
 		array[1] = "Comedor"

@@ -8,7 +8,7 @@ import logging
 from datetime import datetime
 from pyexcel_ods3 import save_data
 
-fuegos = ["Ana","Angel","Fanny y Adrián","Genny","Lide y Montxo","Lorena","Lurdes y Christian","Maria","Marta","Mauge","Miracles y Toni","Nadia","Silbia","Valen","Isa y Nahia","Alf","Jess y Tom","Stefania y Peppe","Leona y Carlos"]
+fuegos = ["Ana","Angel","Fanny y Adrián","Genny","Lide y Montxo","Lorena","Lurdes y Christian","Maria","Marta","Mauge","Miracles y Toni","Nadia","Silbia","Valen","Isa y Nahia","Alf","Jess y Tom","Stefania y Peppe","Carlos"]
 personas = ["Ana","Angel","Fanny","Genny","Lide","Lorena","Lurdes","Maria","Marta","Mauge","Miracles","Nadia","Silbia","Valen","Isa","Alf","Jess","Stefania","Carlos"]
 months = ["ene" , "feb" , "mar", "abr", "may", "jun" , "jul" , "ago" , "sep" , "oct" , "nov" , "dic"]
 fuegos_lower = []
@@ -27,8 +27,8 @@ for index, s in enumerate(fuegos, start = 1):
 	if "Valen" in s:
 		s = "Juan Valentin Ruiz Lopez"
 	# Carlos es ahora Martinez Mampay Carlos Alberto
-	if "Leona y Carlos" in s:
-		s = "Leona y Martinez Mampay Carlos Alberto"
+	if "Carlos" in s:
+		s = "Martinez Mampay Carlos Alberto"
 	fuegos_lower.insert(index,unidecode.unidecode(s.casefold()))
 for index, s in enumerate(personas, start = 1):
 	personas_lower.insert(index,unidecode.unidecode(s.casefold()))
@@ -201,6 +201,12 @@ for row in lines[::-1]:
 	if "huesillo" in row['Concepto'].casefold():
 		array[1] = "Gasto"
 		array[3] = "Calefacción"
+	# rule banco
+	if "COMISION EMISION TRANSF".casefold() in row['Concepto'].casefold() \
+	or "LIQUIDACION AHORRO/CTA COR".casefold() in row['Concepto'].casefold() \
+	or "COMISION MANTENIM. CTA.".casefold() in row['Concepto'].casefold():
+		array[1] = "Gasto"
+		array[3] = "Banco"
 	# rule agua
 	if "tasa de agua" in row['Concepto'].casefold():
 		array[1] = "Gasto"
@@ -209,6 +215,10 @@ for row in lines[::-1]:
 	if "telefonica de espana" in row['Concepto'].casefold() or "sisnet" in row['Concepto'].casefold():
 		array[1] = "Gasto"
 		array[3] = "Internet y teléfono"
+	# rule web
+	if "strato" in row['Concepto'].casefold():
+		array[1] = "Gasto"
+		array[3] = "Web"
 	# rule garbileku
 	if "garbileku" in row['Concepto'].casefold():
 		array[1] = "Gasto"

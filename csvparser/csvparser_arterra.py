@@ -158,7 +158,25 @@ for row in lines[::-1]:
 		array[8] = float(row['Importe'].replace(',','.'))
 	else:
 		array[9] = abs(float(row['Importe'].replace(',','.')))
-	# rule ab1.fuego.VmonthXXX.CmonthYYY.PmonthZZZ
+
+	## specific replacements before the ab1 parsing 
+	#remove S.L in Ecohabitar
+	if "ECOHABITAR VISIONES SOSTENIBLES, S.L" in row['Concepto']:
+		new_concept = row['Concepto'].replace(", S.L","")
+		row['Concepto'] = new_concept
+
+	#remove last point in concepto
+	if row['Concepto'][-1] == ".":
+		new_concept = row['Concepto'][:-1]
+		row['Concepto'] = new_concept
+	
+	# rule ab1.fuego.V:XXX.C:YYY.P:ZZZ.I:ZZZ.E:ZZZ.F:ZZZ
+	# V stands for vivienda
+	# C for comedor
+	# P for proyecto
+	# I for cuota integración
+	# E for almuerzos
+	# F for Fondo solidaridad
 	if "ab1" in row['Concepto'].casefold():
 		try:
 			parts = row['Concepto'].casefold().split('.')
@@ -171,13 +189,18 @@ for row in lines[::-1]:
 			elif len(parts[2].strip()) < 3:
 				raise Exception('badly formatted string. Not enough info in first quantity element:  {}'.format(parts))
 			# if not starting with 'v', 'c' or 'p' and no ':' later -> discard it 
-			elif (((parts[2].strip()[0] != "v") and (parts[2].strip()[0] != "c") and (parts[2].strip()[0] != "p")) or (parts[2].strip()[1] != ":")):
+			elif (((parts[2].strip()[0] != "v") and (parts[2].strip()[0] != "c") and (parts[2].strip()[0] != "p") and (parts[2].strip()[0] != "i") and (parts[2].strip()[0] != "e") and (parts[2].strip()[0] != "f")) or (parts[2].strip()[1] != ":")):
 				raise Exception('badly formatted string. first quantity element not well formed:  {}'.format(parts))
+
+			# remove any additional element on the last part (after a space)
+			if " " in parts[len(parts)-1]:
+				rest = parts[len(parts)-1].split(" ", 1)[0]
+				parts[len(parts)-1] = rest
 			
 			# check if sum of quantity elements is correct
 			total_sum = 0
 			for x in parts[2::]:
-				if ((((x.strip())[0] == "v") or ((x.strip())[0] == "c") or ((x.strip())[0] == "p")) and (((x.strip())[1] == ":") or any((x.strip())[1:4] in r for r in months))):
+				if ((((x.strip())[0] == "v") or ((x.strip())[0] == "c") or ((x.strip())[0] == "p") or ((x.strip())[0] == "i") or ((x.strip())[0] == "e") or ((x.strip())[0] == "f")) and (((x.strip())[1] == ":") or any((x.strip())[1:4] in r for r in months))):
 					numbers = re.findall(r"[-]?[\d]+[\.,]?\d*",x)
 					for i in numbers:
 						total_sum += float(i.replace(',','.'))
@@ -195,19 +218,24 @@ for row in lines[::-1]:
 			else:
 				array[5] = ""
 				indexFuegos = -1
+			
 			# find person in list
 			if any(name[2]+" "+name[3] in s for s in personas_lower):
 				matching = [s for s in personas_lower if name[2]+" "+name[3] in s]
 				indexPersonas = personas_lower.index(matching[0])
 				# print(indexPersonas)
+				array[4] = personas[indexPersonas]
 			else:
+				array[4] = ""
 				indexPersonas = -1
 			# allocate first quantity element {parts[2]}
-			# vivienda
+			
+			## vivienda
 			if (parts[2].strip())[0] == "v" :
 				array[1] = "Gasto"
 				array[3] = "Alquiler vivienda"
-			# proyecto
+			
+			## proyecto
 			elif (parts[2].strip())[0] == "p":
 				array[1] = "Gasto"
 				array[3] = "Alquiler proyectos"
@@ -219,13 +247,27 @@ for row in lines[::-1]:
 					array[6] = "Oficina Oeste"
 				elif "biararte" in row['Concepto'].casefold() or "biar arte" in row['Concepto'].casefold():
 					array[6] = "Biar Arte"
-			# comedor
+			
+			## comedor
 			elif (parts[2].strip())[0] == "c":
 				array[1] = "Comedor"
 				array[3] = "Cuotas comedor"
-				if 'indexPersonas' != -1:
-					array[4] = personas[indexPersonas]
-					array[5] = ""
+
+			## almuerzos
+			elif (parts[2].strip())[0] == "e":
+				array[1] = "Comedor"
+				array[3] = "Botes"
+			
+			## cuota integración
+			elif (parts[2].strip())[0] == "i":
+				array[1] = "Inversión"
+				array[3] = "Inversión entrada a integración"
+
+			## fondo solidaridad
+			elif (parts[2].strip())[0] == "f":
+				array[1] = "Inversión"
+				array[3] = "Fondo Solidaridad Arterrana"
+
 			else:
 				raise Exception('badly formatted string. First letter of first quantity element wrong:  {}'.format(parts))
 			
@@ -248,22 +290,30 @@ for row in lines[::-1]:
 				raise Exception('badly formatted string:  {}'.format(parts))
 			
 			# allocate other quantity elements beyond parts[2]. Need to create another row for each
+			# rule ab1.fuego.V:XXX.C:YYY.P:ZZZ.I:ZZZ.E:ZZZ.F:ZZZ
+			# V stands for vivienda
+			# C for comedor
+			# P for proyecto
+			# I for cuota integración
+			# E for almuerzos
+			# F for Fondo solidaridad
 			if len(parts) > 3:
 				for q, x in enumerate(parts[3::], start=0):
 					# check if parts[3] and more contains valid formatted data, if not cancel parsing
 					# if not starting with 'v', 'c' or 'p' and no ':' later -> discard it 
-					if (((x.strip()[0] != "v") and (x.strip()[0] != "c") and (x.strip()[0] != "p")) or (x.strip()[1] != ":")):
+					if (((x.strip()[0] != "v") and (x.strip()[0] != "c") and (x.strip()[0] != "p") and (x.strip()[0] != "e") and (x.strip()[0] != "i") and (x.strip()[0] != "f")) or (x.strip()[1] != ":")):
 						print('***Warning***: badly formatted string. Quantity element number {} not well formed:  {}'.format(q+3,parts))
 						continue
 					extra_array.append(array.copy())
-					# vivienda
+					
+					## vivienda
 					if x.strip()[0] == "v":
 						extra_array[q][1] = "Gasto"
 						extra_array[q][3] = "Alquiler vivienda"
 						extra_array[q][4] = ""
 						if indexFuegos != -1:
 							extra_array[q][5] = fuegos[indexFuegos]
-					# proyecto
+					## proyecto
 					elif x.strip()[0] == "p":
 						extra_array[q][1] = "Gasto"
 						extra_array[q][3] = "Alquiler proyectos"
@@ -276,13 +326,26 @@ for row in lines[::-1]:
 						elif "biararte" in row['Concepto'].casefold() or "biar arte" in row['Concepto'].casefold():
 							extra_array[q][6] = "Biar Arte"
 							
-					# comedor
+					## comedor
 					elif x.strip()[0] == "c":
 						extra_array[q][1] = "Comedor"
 						extra_array[q][3] = "Cuotas comedor"
-						if indexPersonas != -1:
-							extra_array[q][4] = personas[indexPersonas]
-						extra_array[q][5] = ""
+
+					## almuerzos
+					elif x.strip()[0] == "e":
+						extra_array[q][1] = "Comedor"
+						extra_array[q][3] = "Botes"
+					
+					## cuota integración
+					elif x.strip()[0] == "i":
+						extra_array[q][1] = "Inversión"
+						extra_array[q][3] = "Inversión entrada a integración"
+
+					## fondo solidaridad
+					elif x.strip()[0] == "f":
+						extra_array[q][1] = "Inversión"
+						extra_array[q][3] = "Fondo Solidaridad Arterrana"
+					
 					else:
 						print('WARNING: badly formatted string. Skipping quantity element:  {}'.format(x))
 						extra_array.remove(extra_array[q])
@@ -377,6 +440,8 @@ for row in lines[::-1]:
 	if "global ecovillage network of europe" in row['Concepto'].casefold() or "GLOBAL ECOV.NETW.EUROPE".casefold() in row['Concepto'].casefold():
 		array[6] = "GEN"
 	elif "ecohabitar" in row['Concepto'].casefold():
+		array[4] = "Miracles"
+		array[5] = "Miracles y Toni"
 		array[6] = "Ecohabitar"
 	elif "ana lucia" in row['Concepto'].casefold() and array[3] == "Alquiler proyectos":
 		array[6] = "Oficina Oeste"
@@ -386,6 +451,10 @@ for row in lines[::-1]:
 	if "butano" in row['Concepto'].casefold() and array[4]=="" and array[5]=="" and array[6]=="":
 		array[1] = "Gasto"
 		array[3] = "Butano"
+	# rule Iñigo
+	if "inigo" in row['Concepto'].casefold():
+		array[4] = "Iñigo"
+		array[5] = "Iñigo"
 
 	print(array)
 	data.append(array)

@@ -22,7 +22,7 @@ for index, s in enumerate(fuegos, start = 1):
 		s = "Jess y Tomas Feeney"
 	# Peppe es ahora Giuseppe
 	if "Stefania y Peppe" in s:
-		s = "Stefania del Conte y Giuseppe"
+		s = "Giuseppe el Bahrawy y Stefania del Conte"
 	# Valen es ahora Valentin
 	if "Valen" in s:
 		s = "Juan Valentin Ruiz Lopez"
@@ -75,7 +75,7 @@ for index, s in enumerate(personas, start = 1):
 		s = "Tomas Feeney"
 	# Peppe es ahora Giuseppe
 	if "Peppe" in s:
-		s = "Giuseppe"
+		s = "Giuseppe el Bahrawy"
 	# Valen es ahora Valentin
 	if "Valen" in s:
 		s = "Juan Valentin Ruiz Lopez"
@@ -390,9 +390,9 @@ for row in lines[::-1]:
 		array[3] = "Calefacción"
 	# rule banco
 	if ("COMISION EMISION TRANSF".casefold() in row['Concepto'].casefold() \
-	or "LIQUIDACION AHORRO/CTA COR".casefold() in row['Concepto'].casefold() \
-	or "COMISION MANTENIM. CTA.".casefold() in row['Concepto'].casefold()) \
-	and float(row['Importe'].replace(',','.')) < 0:
+	or "LIQUIDACION AHORRO".casefold() in row['Concepto'].casefold() \
+	or "COMISION MANTENIM".casefold() in row['Concepto'].casefold()) \
+	and float(row['Importe'].replace(',','.')) <= 0:
 		array[1] = "Gasto"
 		array[3] = "Banco"
 	# rule agua
@@ -430,6 +430,10 @@ for row in lines[::-1]:
 	if "pedro enrique ramirez aragon" in row['Concepto'].casefold() or "geserlocal" in row['Concepto'].casefold():
 		array[1] = "Gasto"
 		array[3] = "Alquiler Arterra"
+	# rule residuos Irati
+	if "recibo mancomunidad r.s.u. irati" in row['Concepto'].casefold():
+		array[1] = "Gasto"
+		array[3] = "Residuos mancomunidad"
 	# rule Contenedor
 	# TODO: implement as part of ab1
 	if "david.p" in row['Concepto'].casefold():

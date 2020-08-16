@@ -147,11 +147,11 @@ else:
 	exit()
 
 dictionary = dict()
-data = [["Fecha", "Caja", "Método", "Círculo/Área", "Persona", "Fuego", "Proyecto", "Concepto", "Entrada", "Salida"]]
+data = [["Fecha", "Caja", "Método", "Círculo/Área", "Persona", "Fuego", "Proyecto", "Concepto", "Entrada", "Salida", "Notas"]]
 for row in lines[::-1]:
 	date = datetime.strptime(row['F. valor'],"%d/%m/%Y").date()
 	# generate array
-	array = [date, "", "Banco", "", "", "", "", row['Concepto'], "",""]
+	array = [date, "", "Banco", "", "", "", "", row['Concepto'], "","",""]
 	extra_array = []
 	# add amount either to input or output
 	if float(row['Importe'].replace(',','.')) > 0:
@@ -256,7 +256,7 @@ for row in lines[::-1]:
 			## almuerzos
 			elif (parts[2].strip())[0] == "e":
 				array[1] = "Comedor"
-				array[3] = "Botes"
+				array[3] = "Almuerzos"
 			
 			## cuota integración
 			elif (parts[2].strip())[0] == "i":
@@ -374,6 +374,53 @@ for row in lines[::-1]:
 			print("***********************")
 			logging.error(exception)
 			print("***********************")
+
+
+	# rule Encuentro Arterra XXXX
+	# create three entries and split the money between:
+	# integración: 60%
+	# comedor: 25%
+	# gasto: 15%
+
+	# todo introducir nombre de encuentro en K de desglose, partir cantidad equitativamente
+
+	if "encuentro arterra" in row['Concepto'].casefold():
+		try:
+			array[1] = "Inversión"
+			array[3] = "Centro de encuentros"
+			array[10] = "RIE"
+			# add amount either to input or output
+			if float(row['Importe'].replace(',','.')) > 0:
+				array[8] = float(row['Importe'].replace(',','.'))*0.60
+			else:
+				array[9] = abs(float(row['Importe'].replace(',','.')))*0.60
+
+			# create other two rows
+			extra_array.append(array.copy())
+			extra_array[0][1] = "Gasto"
+			extra_array[0][3] = "Centro de encuentros"
+			extra_array[0][10] = "RIE"
+			# add amount either to input or output
+			if float(row['Importe'].replace(',','.')) > 0:
+				extra_array[0][8] = float(row['Importe'].replace(',','.'))*0.15
+			else:
+				extra_array[0][9] = abs(float(row['Importe'].replace(',','.')))*0.15
+
+			extra_array.append(array.copy())
+			extra_array[1][1] = "Comedor"
+			extra_array[1][3] = "Centro de encuentros"
+			extra_array[1][10] = "RIE"
+			# add amount either to input or output
+			if float(row['Importe'].replace(',','.')) > 0:
+				extra_array[1][8] = float(row['Importe'].replace(',','.'))*0.25
+			else:
+				extra_array[1][9] = abs(float(row['Importe'].replace(',','.')))*0.25
+
+		except Exception as exception:
+			print("***********************")
+			logging.error(exception)
+			print("***********************")
+
 	# rule fanny (Enero C/ Abajo 1,1o) and word alquiler or renta
 	if "abajo 1,1o" in row['Concepto'].casefold() or "renta" in row['Concepto'].casefold() or "mensualidad" in row['Concepto'].casefold():
 		array[1] = "Gasto"
@@ -459,6 +506,15 @@ for row in lines[::-1]:
 	if "inigo" in row['Concepto'].casefold():
 		array[4] = "Iñigo"
 		array[5] = "Iñigo"
+	# rule seguro + impuesto circulación camión
+	if "helvetia compania suiza" in row['Concepto'].casefold() and array[4]=="" and array[5]=="" and array[6]=="":
+		array[1] = "Gasto"
+		array[3] = "Camión"
+
+	# rule seguro + impuesto circulación camión
+	if "ayuntamiento del valle de eges" in row['Concepto'].casefold() and array[4]=="" and array[5]=="" and array[6]=="":
+		array[1] = "Gasto"
+		array[3] = "Camión"
 
 	print(array)
 	data.append(array)

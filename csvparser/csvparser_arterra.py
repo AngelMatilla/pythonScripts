@@ -334,7 +334,7 @@ for row in lines[::-1]:
 					## almuerzos
 					elif x.strip()[0] == "e":
 						extra_array[q][1] = "Comedor"
-						extra_array[q][3] = "Botes"
+						extra_array[q][3] = "Almuerzos"
 					
 					## cuota integración
 					elif x.strip()[0] == "i":

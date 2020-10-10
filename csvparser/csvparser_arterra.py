@@ -1,3 +1,45 @@
+"""
+Hola a todas,
+Os recuerdo que desde contabilidad pedimos que las transferencias a Arterra se hagan de una forma determinada. He cambiado ligeramente la plantilla para que sea más sencillo dejar una transferencia periódica y se adapte al fondo de solidaridad que se acaba de publicar. Esto es para que la contabilidad sea más sencilla (muchas gracias!!). 
+ 
+Recuerdo que la vivienda se debería pagar hasta el día 5 de cada mes y que si tenéis más de un mes de deuda os corresponde poneros en contacto con contabilidad para plantear un escenario de como se va a saldar esa deuda y cuando. 
+ 
+Idealmente el fondo de solidaridad se debería pagar en un pago único, pero si no se puede, se puede ir pagando mensualmente. Recuerdo que el fondo de solidaridad corresponde a 60€/adulto en integración o integrado. 
+
+Es muy fácil hacerlo como plantilla si accedéis a vuestro banco online (os puedo ayudar si lo necesitais). Idealmente se podría establecer la vivienda/proyecto como transferencia periódica y lo demás se puede ir haciendo a mano mes a mes. 
+ 
+Esta es la plantilla
+
+AB1.Fuego.V:XXX.C:YYY.P:ZZZ.E:XXX.I:YYY.F:ZZZ.D:XXX.S:YYY.B:ZZZ
+(los dos puntos después de la letra son opcionales)
+
+Fijaos que entre elementos no hay espacios sino que hay puntos.
+V es vivienda (va seguido de dos puntos (opciona) y la cantidad)
+C es comedor (va seguido de dos puntos (opciona) y la cantidad)
+P es proyecto (va seguido de dos puntos (opciona) y la cantidad)
+E es almuerzos (va seguido de dos puntos (opciona) y la cantidad)
+I es cuota de integración (va seguido de dos puntos (opciona) y la cantidad)
+F es fondo de solidaridad (va seguido de dos puntos (opciona) y la cantidad)
+D es una donacion (va seguido de dos puntos (opciona) y la cantidad)
+S es visita participativa [vivienda] (va seguido de dos puntos (opciona) y la cantidad)
+B es bote [comedor] (va seguido de dos puntos (opciona) y la cantidad)
+
+Podéis usar los elementos por separado o todos juntos en un mismo pago.
+
+Los decimales en las cantidades se ponen con coma baja o alta: 32,50 o 32'50. No uséis punto por favor ya que se usa como separador
+
+Si queréis añadir algo porque lo necesitáis como concepto lo podéis añadir después del código separado por un espacio
+
+Ejemplos:
+
+* AB1.Angel.V:300.E:20.F:60
+* AB1.montxo-lide.C:46 mensaje que necesitan montxo y lide
+* AB1.Ana.V:282.P:50
+* AB1.Mauge.V:250.C:50.P:20
+* AB1.Valen.V:250.C:40.F:60
+* AB1.monica-franco.B:30 Comidas visitas
+* AB1.Peppe.D:67
+"""
 # execute with python 3!!
 import csv
 import sys
@@ -8,8 +50,8 @@ import logging
 from datetime import datetime
 from pyexcel_ods3 import save_data
 
-fuegos = ["Ana","Angel","Fanny y Adrián","Genny","Lide y Montxo","Lorena","Lurdes y Christian","Maria","Marta","Mauge","Miracles y Toni","Nadia","Silbia","Valen","Isa y Nahia","Alf","Jess y Tom","Stefania y Peppe","Carlos","Monica y Franco","Ibai","Iñigo"]
-personas = ["Adrián","Alf","Ametz","Ana","Angel","Aratz","Chester","Christian","Eki","Fanny","Genny","Ibrahim","Isa","Jess","Lide","Lluch","Lorena","Lurdes","Manuel","Maria","Mariona","Marta","Mauge","Miracles","Montxo","Nadia","Nahia","Noa","Peppe","Salma","Selba","Silbia","Stefania","Tom","Toni","Uma","Urbi","Valen","Pepe Ecohabitar","Carlos","Monica","Franco","Ibai","Iñigo"]
+fuegos = ["Ana","Angel","Fanny y Adrián","Genny","Lide y Montxo","Lorena","Lurdes y Christian","Maria","Marta","Mauge","Miracles y Toni","Nadia","Silbia","Valen","Isa y Nahia","Alf","Jess y Tom","Stefania y Peppe","Carlos","Monica y Franco","Ibai","Iñigo","Alsu"]
+personas = ["Adrián","Alf","Ametz","Ana","Angel","Aratz","Chester","Christian","Eki","Fanny","Genny","Ibrahim","Isa","Jess","Lide","Lluch","Lorena","Lurdes","Manuel","Maria","Mariona","Marta","Mauge","Miracles","Montxo","Nadia","Nahia","Noa","Peppe","Salma","Selba","Silbia","Stefania","Tom","Toni","Uma","Urbi","Valen","Pepe Ecohabitar","Carlos","Monica","Franco","Ibai","Iñigo","Alsu"]
 months = ["ene" , "feb" , "mar", "abr", "may", "jun" , "jul" , "ago" , "sep" , "oct" , "nov" , "dic"]
 fuegos_lower = []
 personas_lower = []
@@ -65,6 +107,12 @@ for index, s in enumerate(fuegos, start = 1):
 	# Miracles y Toni
 	if "Miracles y Toni" in s:
 		s = "Juana Milagros y Toni"
+	# Mónica y Franco
+	if "Monica y Franco" in s:
+		s = "Monica y Franco de Sena Llobera"
+	# Alsu
+	if "Alsu" in s:
+		s = "Alsu MURATOVA MURATOVA"
 	fuegos_lower.insert(index,unidecode.unidecode(s.casefold()))
 for index, s in enumerate(personas, start = 1):
 	# Christian le pongo apellidos para que lo encuentre
@@ -120,10 +168,16 @@ for index, s in enumerate(personas, start = 1):
 		s = "Adrián Areta"
 	# Pepe Ecohabitar
 	if "Pepe Ecohabitar" in s:
-		s = "Jose Ignacio Rojas Rojas"
+		s = "Jose Ignacio ROJAS ROJAS"
 	# Miracles
 	if "Miracles" in s:
 		s = "Juana Milagros"
+	# Franco
+	if "Franco" in s:
+		s = "Franco de Sena Llobera"
+	# Alsu
+	if "Alsu" in s:
+		s = "Alsu MURATOVA MURATOVA"
 	personas_lower.insert(index,unidecode.unidecode(s.casefold()))
 
 # print(fuegos_lower)
@@ -177,6 +231,9 @@ for row in lines[::-1]:
 	# I for cuota integración
 	# E for almuerzos
 	# F for Fondo solidaridad
+	# D for Donación
+	# S for Visita Participativa vivienda
+	# B for Bote Comedor
 	if "ab1" in row['Concepto'].casefold():
 		try:
 			parts = row['Concepto'].casefold().split('.')
@@ -188,9 +245,11 @@ for row in lines[::-1]:
 			# if length is < 3 discard it
 			elif len(parts[2].strip()) < 3:
 				raise Exception('badly formatted string. Not enough info in first quantity element:  {}'.format(parts))
-			# if not starting with 'v', 'c' or 'p' and no ':' later -> discard it 
-			elif (((parts[2].strip()[0] != "v") and (parts[2].strip()[0] != "c") and (parts[2].strip()[0] != "p") and (parts[2].strip()[0] != "i") and (parts[2].strip()[0] != "e") and (parts[2].strip()[0] != "f")) or (parts[2].strip()[1] != ":")):
-				raise Exception('badly formatted string. first quantity element not well formed:  {}'.format(parts))
+			# if not starting with 'v', 'c', 'p', 'e', 'f', 'd', 's' or 'b' and no ':' later -> discard it 
+			elif (((parts[2].strip()[0] != "v") and (parts[2].strip()[0] != "c") and (parts[2].strip()[0] != "p") and (parts[2].strip()[0] != "i") \
+				and (parts[2].strip()[0] != "e") and (parts[2].strip()[0] != "f") and (parts[2].strip()[0] != "d") and (parts[2].strip()[0] != "s") \
+				and (parts[2].strip()[0] != "b")) ): # or (parts[2].strip()[1] != ":")):
+					raise Exception('badly formatted string. first quantity element not well formed:  {}'.format(parts))
 
 			# remove any additional element on the last part (after a space)
 			if " " in parts[len(parts)-1]:
@@ -200,20 +259,20 @@ for row in lines[::-1]:
 			# check if sum of quantity elements is correct
 			total_sum = 0
 			for x in parts[2::]:
-				if ((((x.strip())[0] == "v") or ((x.strip())[0] == "c") or ((x.strip())[0] == "p") or ((x.strip())[0] == "i") or ((x.strip())[0] == "e") or ((x.strip())[0] == "f")) and (((x.strip())[1] == ":") or any((x.strip())[1:4] in r for r in months))):
-					numbers = re.findall(r"[-]?[\d]+[\.,]?\d*",x)
-					for i in numbers:
-						total_sum += float(i.replace(',','.'))
-			if (total_sum != float(row['Importe'].replace(',','.'))):
+				if ((((x.strip())[0] == "v") or ((x.strip())[0] == "c") or ((x.strip())[0] == "p") or ((x.strip())[0] == "i") \
+					or ((x.strip())[0] == "e") or ((x.strip())[0] == "f") or ((x.strip())[0] == "d") or ((x.strip())[0] == "s") \
+					or ((x.strip())[0] == "b")) or any((x.strip())[1:4] in r for r in months)): # and (((x.strip())[1] == ":")
+						numbers = re.findall(r"[-]?[\d]+[,.']?\d*",unidecode.unidecode(x))
+						for i in numbers:
+							total_sum += float(i.replace(',','.').replace('\'','.'))
+			if (total_sum != float(row['Importe'].replace(',','.').replace('\'','.'))):
 				raise Exception('Total sum of quantity elements is not correctly calculated:  {}'.format(parts))
 
 			# find fuego in list
 			name = parts[0].split()
-			# print(name[2]+" "+name[3])
 			if any(name[2]+" "+name[3] in s for s in fuegos_lower):
 				matching = [s for s in fuegos_lower if name[2]+" "+name[3] in s]
 				indexFuegos = fuegos_lower.index(matching[0])
-				# print(indexFuegos)
 				array[5] = fuegos[indexFuegos]
 			else:
 				array[5] = ""
@@ -223,7 +282,6 @@ for row in lines[::-1]:
 			if any(name[2]+" "+name[3] in s for s in personas_lower):
 				matching = [s for s in personas_lower if name[2]+" "+name[3] in s]
 				indexPersonas = personas_lower.index(matching[0])
-				# print(indexPersonas)
 				array[4] = personas[indexPersonas]
 			else:
 				array[4] = ""
@@ -268,26 +326,52 @@ for row in lines[::-1]:
 				array[1] = "Inversión"
 				array[3] = "Fondo Solidaridad Arterrana"
 
+			## donación
+			elif (parts[2].strip())[0] == "d":
+				array[1] = "Inversión"
+				array[3] = "Donación"
+
+			## Visita Participativa vivienda
+			elif (parts[2].strip())[0] == "s":
+				array[1] = "Gasto"
+				array[3] = "Visitas participativas"
+
+			## Bote Comedor
+			elif (parts[2].strip())[0] == "b":
+				array[1] = "Comedor"
+				array[3] = "Botes"
+
 			else:
 				raise Exception('badly formatted string. First letter of first quantity element wrong:  {}'.format(parts))
 			
 			# read number in first quantity element
+			numbers = re.findall(r"[-]?[\d]+[\.,']?\d*",(unidecode.unidecode(parts[2].strip())[1:len(parts[2].strip())]))
+			if numbers:
+				if float(numbers[0].replace(',','.').replace('\'','.')) > 0:
+					array[8] = float(numbers[0].replace(',','.').replace('\'','.'))
+				else: 
+					array[9] = abs(float(numbers[0].replace(',','.').replace('\'','.')))
+			else:
+				raise Exception('badly formatted string:  {}'.format(parts))
+			
+			"""
 			if (parts[2].strip())[1] == ":":
-				numbers = re.findall(r"[-]?[\d]+[\.,]?\d*",(parts[2].strip())[2:len(parts[2].strip())])
+				numbers = re.findall(r"[-]?[\d]+[\.,']?\d*",(parts[2].strip())[2:len(parts[2].strip())])
 				#print(numbers)
-				if float(numbers[0].replace(',','.')) > 0:
-					array[8] = float(numbers[0].replace(',','.'))
+				if float(numbers[0].replace(',','.').replace('\'','.')) > 0:
+					array[8] = float(numbers[0].replace(',','.').replace('\'','.'))
 				else: 
-					array[9] = abs(float(numbers[0].replace(',','.')))
+					array[9] = abs(float(numbers[0].replace(',','.').replace('\'','.')))
 			elif any((parts[2].strip())[1:4] in r for r in months):
-				numbers = re.findall(r"[-]?[\d]+[\.,]?\d*",(parts[2].strip())[4:len(parts[2].strip())])
+				numbers = re.findall(r"[-]?[\d]+[\.,'']?\d*",(parts[2].strip())[4:len(parts[2].strip())])
 				#print(numbers)
-				if float(numbers[0].replace(',','.')) > 0:
-					array[8] = float(numbers[0].replace(',','.'))
+				if float(numbers[0].replace(',','.').replace('\'','.')) > 0:
+					array[8] = float(numbers[0].replace(',','.').replace('\'','.'))
 				else: 
-					array[9] = abs(float(numbers[0].replace(',','.')))
+					array[9] = abs(float(numbers[0].replace(',','.').replace('\'','.')))
 			else: 
 				raise Exception('badly formatted string:  {}'.format(parts))
+			"""
 			
 			# allocate other quantity elements beyond parts[2]. Need to create another row for each
 			# rule ab1.fuego.V:XXX.C:YYY.P:ZZZ.I:ZZZ.E:ZZZ.F:ZZZ
@@ -297,13 +381,17 @@ for row in lines[::-1]:
 			# I for cuota integración
 			# E for almuerzos
 			# F for Fondo solidaridad
+			# D for Donación
+			# S for Visita Participativa vivienda
+			# B for Bote Comedor
 			if len(parts) > 3:
 				for q, x in enumerate(parts[3::], start=0):
 					# check if parts[3] and more contains valid formatted data, if not cancel parsing
 					# if not starting with 'v', 'c' or 'p' and no ':' later -> discard it 
-					if (((x.strip()[0] != "v") and (x.strip()[0] != "c") and (x.strip()[0] != "p") and (x.strip()[0] != "e") and (x.strip()[0] != "i") and (x.strip()[0] != "f")) or (x.strip()[1] != ":")):
-						print('***Warning***: badly formatted string. Quantity element number {} not well formed:  {}'.format(q+3,parts))
-						continue
+					if (((x.strip()[0] != "v") and (x.strip()[0] != "c") and (x.strip()[0] != "p") and (x.strip()[0] != "e") and (x.strip()[0] != "i") \
+						and (x.strip()[0] != "f") and (x.strip()[0] != "d") and (x.strip()[0] != "s") and (x.strip()[0] != "b"))): # or (x.strip()[1] != ":")):
+							print('***Warning***: badly formatted string. Quantity element number {} not well formed:  {}'.format(q+3,parts))
+							continue
 					extra_array.append(array.copy())
 					
 					## vivienda
@@ -345,6 +433,21 @@ for row in lines[::-1]:
 					elif x.strip()[0] == "f":
 						extra_array[q][1] = "Inversión"
 						extra_array[q][3] = "Fondo Solidaridad Arterrana"
+
+					## donación
+					elif x.strip()[0] == "d":
+						extra_array[q][1] = "Inversión"
+						extra_array[q][3] = "Donación"
+
+					## Visita Participativa vivienda
+					elif x.strip()[0] == "s":
+						extra_array[q][1] = "Gasto"
+						extra_array[q][3] = "Visitas participativas"
+
+					## Bote Comedor
+					elif x.strip()[0] == "b":
+						extra_array[q][1] = "Comedor"
+						extra_array[q][3] = "Botes"
 					
 					else:
 						print('WARNING: badly formatted string. Skipping quantity element:  {}'.format(x))
@@ -352,6 +455,16 @@ for row in lines[::-1]:
 						continue
 					
 					# read number in other quantity element
+					numbers = re.findall(r"[-]?[\d]+[\.,']?\d*",(unidecode.unidecode(x.strip())[1:len(x.strip())]))
+					if numbers:
+						if float(numbers[0].replace(',','.').replace('\'','.')) > 0:
+							extra_array[q][8] = float(numbers[0].replace(',','.').replace('\'','.'))
+						else: 
+							extra_array[q][9] = abs(float(numbers[0].replace(',','.').replace('\'','.')))
+					else:
+						raise Exception('badly formatted string:  {}'.format(parts))
+
+					"""
 					if (x.strip())[1] == ":":
 						numbers = re.findall(r"[-]?[\d]+[\.,]?\d*",(x.strip())[2:len(x.strip())])
 						#print(numbers)
@@ -369,6 +482,7 @@ for row in lines[::-1]:
 					else: 
 						print('WARNING: badly formatted string. Skipping quantity element:  {}'.format(x))
 						continue
+					"""
 
 		except Exception as exception:
 			print("***********************")
@@ -506,6 +620,11 @@ for row in lines[::-1]:
 	if "inigo" in row['Concepto'].casefold():
 		array[4] = "Iñigo"
 		array[5] = "Iñigo"
+	# rule Pepe Ecohabitar
+	if "jose ignacio rojas rojas" in row['Concepto'].casefold():
+		array[1] = "Comedor"
+		array[3] = "Cuotas comedor"
+		array[4] = "Pepe Ecohabitar"
 	# rule seguro + impuesto circulación camión
 	if "helvetia compania suiza" in row['Concepto'].casefold() and array[4]=="" and array[5]=="" and array[6]=="":
 		array[1] = "Gasto"

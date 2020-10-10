@@ -305,6 +305,8 @@ for row in lines[::-1]:
 					array[6] = "Oficina Oeste"
 				elif "biararte" in row['Concepto'].casefold() or "biar arte" in row['Concepto'].casefold():
 					array[6] = "Biar Arte"
+				elif "fanny" in row['Concepto'].casefold() or "ceramica" in row['Concepto'].casefold():
+					array[6] = "Taller cerámica"
 			
 			## comedor
 			elif (parts[2].strip())[0] == "c":
@@ -413,6 +415,8 @@ for row in lines[::-1]:
 							extra_array[q][6] = "Oficina Oeste"
 						elif "biararte" in row['Concepto'].casefold() or "biar arte" in row['Concepto'].casefold():
 							extra_array[q][6] = "Biar Arte"
+						elif "fanny" in row['Concepto'].casefold() or "ceramica" in row['Concepto'].casefold():
+							extra_array[q][6] = "Taller cerámica"
 							
 					## comedor
 					elif x.strip()[0] == "c":

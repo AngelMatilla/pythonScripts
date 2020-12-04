@@ -1,44 +1,49 @@
 """
 Hola a todas,
-Os recuerdo que desde contabilidad pedimos que las transferencias a Arterra se hagan de una forma determinada. He cambiado ligeramente la plantilla para que sea más sencillo dejar una transferencia periódica y se adapte al fondo de solidaridad que se acaba de publicar. Esto es para que la contabilidad sea más sencilla (muchas gracias!!). 
- 
-Recuerdo que la vivienda se debería pagar hasta el día 5 de cada mes y que si tenéis más de un mes de deuda os corresponde poneros en contacto con contabilidad para plantear un escenario de como se va a saldar esa deuda y cuando. 
- 
-Idealmente el fondo de solidaridad se debería pagar en un pago único, pero si no se puede, se puede ir pagando mensualmente. Recuerdo que el fondo de solidaridad corresponde a 60€/adulto en integración o integrado. 
+Os recuerdo que desde contabilidad pedimos que las transferencias a Arterra se hagan de una forma determinada. Hay novedades en la plantilla!!
+ 
+Recuerdo que la vivienda se debería pagar hasta el día 5 de cada mes y que si tenéis más de un mes de deuda os corresponde poneros en contacto con contabilidad para plantear un escenario de cómo se va a saldar esa deuda y cuando.
+Aquí los detalles de la cuenta: Nombre: Asociación Arterra BizimoduIBAN: ES97 1491 0001 2921 1057 3728BIC: TRIOESMMXXX 
+Idealmente el fondo de solidaridad se debería pagar en un pago único, pero si no se puede, se puede ir pagando mensualmente. Recuerdo que el fondo de solidaridad corresponde a 60€/adulto en integración o integrado.
 
-Es muy fácil hacerlo como plantilla si accedéis a vuestro banco online (os puedo ayudar si lo necesitais). Idealmente se podría establecer la vivienda/proyecto como transferencia periódica y lo demás se puede ir haciendo a mano mes a mes. 
- 
+Es muy fácil hacerlo como plantilla si accedeis a vuestro banco online (os puedo ayudar si lo necesitáis). Idealmente se podría establecer la vivienda/proyecto como transferencia periódica y lo demás se puede ir haciendo a mano mes a mes.
+ 
 Esta es la plantilla
 
 AB1.Fuego.V:XXX.C:YYY.P:ZZZ.E:XXX.I:YYY.F:ZZZ.D:XXX.S:YYY.B:ZZZ
-(los dos puntos después de la letra son opcionales)
 
-Fijaos que entre elementos no hay espacios sino que hay puntos.
-V es vivienda (va seguido de dos puntos (opciona) y la cantidad)
-C es comedor (va seguido de dos puntos (opciona) y la cantidad)
-P es proyecto (va seguido de dos puntos (opciona) y la cantidad)
-E es almuerzos (va seguido de dos puntos (opciona) y la cantidad)
+Notas sobre puntuación: 
+* Nota 1: Fijaos que entre elementos no hay espacios sino que hay puntos.
+* Nota 2: Los decimales en las cantidades se ponen con coma baja o alta: 32,50 o 32'50. No uséis punto por favor ya que se usa como separador (ni acento tampoco).
+* Nota 3: En caso de que vuestro banco no admita comas "," o " ' ", evitad pagar cosas fraccionadas y redondead la cantidad
+* Nota 4: los dos puntos después de la letra son opcionales en caso de que vuestro banco no permita ese caráctere.g. AB1.Fuego.VXXX.CYYY.PZZZ.EXXX.IYYY.FZZZ.DXXX.SYYY.BZZZ
+* Nota 5: si vuestro banco no os permite usar el punto "." podeis usar dos paréntesis "()"e.g. AB1()Fuego()V:XXX()C:YYY()P:ZZZ()E:XXX()I:YYY()F:ZZZ()D:XXX()S:YYY()B:ZZZ
+* Nota 6: las notas 4 y 5 son combinables :) 
+
+Notas sobre el significado de las letras: 
+V es cuotas de vivienda (va seguido de dos puntos (opciona) y la cantidad)
+C es cuotas de comedor (va seguido de dos puntos (opciona) y la cantidad)
+P es cuotas de proyecto (va seguido de dos puntos (opciona) y la cantidad)
+E es cuotas de almuerzos (va seguido de dos puntos (opciona) y la cantidad)
 I es cuota de integración (va seguido de dos puntos (opciona) y la cantidad)
 F es fondo de solidaridad (va seguido de dos puntos (opciona) y la cantidad)
-D es una donacion (va seguido de dos puntos (opciona) y la cantidad)
+D es una donación (va seguido de dos puntos (opciona) y la cantidad)
 S es visita participativa [vivienda] (va seguido de dos puntos (opciona) y la cantidad)
-B es bote [comedor] (va seguido de dos puntos (opciona) y la cantidad)
+B es bote [comedor de visitas] (va seguido de dos puntos (opciona) y la cantidad)
 
 Podéis usar los elementos por separado o todos juntos en un mismo pago.
-
-Los decimales en las cantidades se ponen con coma baja o alta: 32,50 o 32'50. No uséis punto por favor ya que se usa como separador
 
 Si queréis añadir algo porque lo necesitáis como concepto lo podéis añadir después del código separado por un espacio
 
 Ejemplos:
 
-* AB1.Angel.V:300.E:20.F:60
-* AB1.montxo-lide.C:46 mensaje que necesitan montxo y lide
-* AB1.Ana.V:282.P:50
-* AB1.Mauge.V:250.C:50.P:20
-* AB1.Valen.V:250.C:40.F:60
-* AB1.monica-franco.B:30 Comidas visitas
-* AB1.Peppe.D:67
+* AB1.Angel.V:300.E:20.F:60
+* AB1.montxo-lide.C:46 mensaje que necesitan montxo y lide
+* AB1.Ana.V:282.P:50
+* AB1.Mauge.V:250.C:50.P:20
+* AB1.Valen.V:250.C:40.F:60
+* AB1.monica-franco.B:30 Comidas visitas
+* AB1.Peppe.D:67
 """
 # execute with python 3!!
 import csv
@@ -50,8 +55,8 @@ import logging
 from datetime import datetime
 from pyexcel_ods3 import save_data
 
-fuegos = ["Ana","Angel","Fanny y Adrián","Genny","Lide y Montxo","Lorena","Lurdes y Christian","Maria","Marta","Mauge","Miracles y Toni","Nadia","Silbia","Valen","Isa y Nahia","Alf","Jess y Tom","Stefania y Peppe","Carlos","Monica y Franco","Ibai","Iñigo","Alsu"]
-personas = ["Adrián","Alf","Ametz","Ana","Angel","Aratz","Chester","Christian","Eki","Fanny","Genny","Ibrahim","Isa","Jess","Lide","Lluch","Lorena","Lurdes","Manuel","Maria","Mariona","Marta","Mauge","Miracles","Montxo","Nadia","Nahia","Noa","Peppe","Salma","Selba","Silbia","Stefania","Tom","Toni","Uma","Urbi","Valen","Pepe Ecohabitar","Carlos","Monica","Franco","Ibai","Iñigo","Alsu"]
+fuegos = ["Ana","Angel","Fanny y Adrián","Genny","Lide y Montxo","Lorena","Lurdes y Christian","Maria","Marta","Mauge","Miracles y Toni","Nadia","Silbia","Valen","Isa y Nahia","Alf","Jess y Tom","Stefania y Peppe","Carlos","Monica y Franco","Ibai","Iñigo","Alsu","Beñat","Moni y Tiko","Ione y Leona"]
+personas = ["Adrián","Alf","Ametz","Ana","Angel","Aratz","Chester","Christian","Eki","Fanny","Genny","Ibrahim","Isa","Jess","Lide","Lluch","Lorena","Lurdes","Manuel","Maria","Mariona","Marta","Mauge","Miracles","Montxo","Nadia","Nahia","Noa","Peppe","Salma","Selba","Silbia","Stefania","Tom","Toni","Uma","Urbi","Valen","Pepe Ecohabitar","Carlos","Monica","Franco","Ibai","Iñigo","Alsu","Beñat","Bianca","Moni","Tiko","Leona","Ione"]
 months = ["ene" , "feb" , "mar", "abr", "may", "jun" , "jul" , "ago" , "sep" , "oct" , "nov" , "dic"]
 fuegos_lower = []
 personas_lower = []
@@ -113,6 +118,15 @@ for index, s in enumerate(fuegos, start = 1):
 	# Alsu
 	if "Alsu" in s:
 		s = "Alsu MURATOVA MURATOVA"
+	# Moni y Tiko
+	if "Moni y Tiko" in s:
+		s = "Moni y VICENTE ESTEVE SUBIES"
+	# Beñat
+	if "Beñat" in s:
+		s = "BENAT GURMENDI CULLA"
+	# Nadia
+	if "Nadia" in s:
+		s = "NADIA CALDERON DELGADO"
 	fuegos_lower.insert(index,unidecode.unidecode(s.casefold()))
 for index, s in enumerate(personas, start = 1):
 	# Christian le pongo apellidos para que lo encuentre
@@ -178,6 +192,15 @@ for index, s in enumerate(personas, start = 1):
 	# Alsu
 	if "Alsu" in s:
 		s = "Alsu MURATOVA MURATOVA"
+	# Tiko
+	if "Tiko" in s:
+		s = "VICENTE ESTEVE SUBIES"
+	# Beñat
+	if "Beñat" in s:
+		s = "BENAT GURMENDI CULLA"
+	# Nadia
+	if "Nadia" in s:
+		s = "NADIA CALDERON DELGADO"
 	personas_lower.insert(index,unidecode.unidecode(s.casefold()))
 
 # print(fuegos_lower)
@@ -212,6 +235,11 @@ for row in lines[::-1]:
 		array[8] = float(row['Importe'].replace(',','.'))
 	else:
 		array[9] = abs(float(row['Importe'].replace(',','.')))
+
+	# replace "()" by "." before parsing in concept
+	if "()" in row['Concepto']:
+		new_concept = row['Concepto'].replace("()",".")
+		row['Concepto'] = new_concept
 
 	## specific replacements before the ab1 parsing 
 	#remove S.L in Ecohabitar
@@ -540,7 +568,7 @@ for row in lines[::-1]:
 			print("***********************")
 
 	# rule fanny (Enero C/ Abajo 1,1o) and word alquiler or renta
-	if "abajo 1,1o" in row['Concepto'].casefold() or "renta" in row['Concepto'].casefold() or "mensualidad" in row['Concepto'].casefold():
+	if "abajo 1, 1o" in row['Concepto'].casefold() or "abajo 1,1o" in row['Concepto'].casefold() or "renta" in row['Concepto'].casefold() or "mensualidad" in row['Concepto'].casefold():
 		array[1] = "Gasto"
 		array[3] = "Alquiler vivienda"
 		# find fuego in list
@@ -608,14 +636,26 @@ for row in lines[::-1]:
 	# rule proyectos
 	if "global ecovillage network of europe" in row['Concepto'].casefold() or "GLOBAL ECOV.NETW.EUROPE".casefold() in row['Concepto'].casefold():
 		array[6] = "GEN"
+		array[1] = "Gasto"
+		array[3] = "Alquiler proyectos"
 	elif "ecohabitar" in row['Concepto'].casefold():
+		array[1] = "Gasto"
+		array[3] = "Alquiler proyectos"
 		array[4] = "Miracles"
 		array[5] = "Miracles y Toni"
 		array[6] = "Ecohabitar"
 	elif "ana lucia" in row['Concepto'].casefold() and array[3] == "Alquiler proyectos":
+		array[1] = "Gasto"
+		array[3] = "Alquiler proyectos"
 		array[6] = "Oficina Oeste"
 	elif "biararte" in row['Concepto'].casefold() or "biar arte" in row['Concepto'].casefold():
+		array[1] = "Gasto"
+		array[3] = "Alquiler proyectos"
 		array[6] = "Biar Arte"
+	elif "baratzan" in row['Concepto'].casefold():
+		array[1] = "Gasto"
+		array[3] = "Alquiler proyectos"
+		array[6] = "Baratzan Blai"
 	# rule butano
 	if "butano" in row['Concepto'].casefold() and array[4]=="" and array[5]=="" and array[6]=="":
 		array[1] = "Gasto"
@@ -638,6 +678,10 @@ for row in lines[::-1]:
 	if "ayuntamiento del valle de eges" in row['Concepto'].casefold() and array[4]=="" and array[5]=="" and array[6]=="":
 		array[1] = "Gasto"
 		array[3] = "Camión"
+	# rule Responsabilidad Civil
+	if "mic responsabilidad civil" in row['Concepto'].casefold() and array[4]=="" and array[5]=="" and array[6]=="":
+		array[1] = "Gasto"
+		array[3] = "Seguro Responsabilidad Civil"
 
 	print(array)
 	data.append(array)

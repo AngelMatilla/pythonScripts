@@ -138,6 +138,9 @@ for index, s in enumerate(personas, start = 1):
 	# Peppe es ahora Giuseppe
 	if "Peppe" in s:
 		s = "Giuseppe el Bahrawy"
+	# Stefania es ahora Stefania del Conte
+	if "Stefania" in s:
+		s = "Stefania del Conte"
 	# Valen es ahora Valentin
 	if "Valen" in s:
 		s = "Juan Valentin Ruiz Lopez"

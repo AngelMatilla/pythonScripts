@@ -112,9 +112,9 @@ for index, s in enumerate(fuegos, start = 1):
 	# Miracles y Toni
 	if "Miracles y Toni" in s:
 		s = "Juana Milagros y Toni"
-	# Mónica y Franco
+	# Monica y Franco
 	if "Monica y Franco" in s:
-		s = "Monica y Franco de Sena Llobera"
+		s = "Monica Cuende Lozano y Franco de Sena Llobera"
 	# Alsu
 	if "Alsu" in s:
 		s = "Alsu MURATOVA MURATOVA"
@@ -127,6 +127,9 @@ for index, s in enumerate(fuegos, start = 1):
 	# Nadia
 	if "Nadia" in s:
 		s = "NADIA CALDERON DELGADO"
+	# Leona
+	if "Ione y Leona" in s:
+		s = "Ione y Leona Berengo"
 	fuegos_lower.insert(index,unidecode.unidecode(s.casefold()))
 for index, s in enumerate(personas, start = 1):
 	# Christian le pongo apellidos para que lo encuentre
@@ -189,6 +192,9 @@ for index, s in enumerate(personas, start = 1):
 	# Miracles
 	if "Miracles" in s:
 		s = "Juana Milagros"
+	# Monica
+	if "Monica" in s:
+		s = "Monica Cuende Lozano"
 	# Franco
 	if "Franco" in s:
 		s = "Franco de Sena Llobera"
@@ -204,6 +210,9 @@ for index, s in enumerate(personas, start = 1):
 	# Nadia
 	if "Nadia" in s:
 		s = "NADIA CALDERON DELGADO"
+	# Leona
+	if "Leona" in s:
+		s = "Leona Berengo"
 	personas_lower.insert(index,unidecode.unidecode(s.casefold()))
 
 # print(fuegos_lower)
@@ -535,9 +544,10 @@ for row in lines[::-1]:
 
 	if "encuentro arterra" in row['Concepto'].casefold():
 		try:
+			# print(row['Concepto'].casefold()[row['Concepto'].casefold().index("encuentro arterra")+len("encuentro arterra "):])
 			array[1] = "Inversión"
 			array[3] = "Centro de encuentros"
-			array[10] = "RIE"
+			array[10] = row['Concepto'].casefold()[row['Concepto'].casefold().index("encuentro arterra")+len("encuentro arterra "):]
 			# add amount either to input or output
 			if float(row['Importe'].replace(',','.')) > 0:
 				array[8] = float(row['Importe'].replace(',','.'))*0.60
@@ -548,7 +558,7 @@ for row in lines[::-1]:
 			extra_array.append(array.copy())
 			extra_array[0][1] = "Gasto"
 			extra_array[0][3] = "Centro de encuentros"
-			extra_array[0][10] = "RIE"
+			extra_array[0][10] = row['Concepto'].casefold()[row['Concepto'].casefold().index("encuentro arterra")+len("encuentro arterra "):]
 			# add amount either to input or output
 			if float(row['Importe'].replace(',','.')) > 0:
 				extra_array[0][8] = float(row['Importe'].replace(',','.'))*0.15
@@ -558,7 +568,7 @@ for row in lines[::-1]:
 			extra_array.append(array.copy())
 			extra_array[1][1] = "Comedor"
 			extra_array[1][3] = "Centro de encuentros"
-			extra_array[1][10] = "RIE"
+			extra_array[1][10] = row['Concepto'].casefold()[row['Concepto'].casefold().index("encuentro arterra")+len("encuentro arterra "):]
 			# add amount either to input or output
 			if float(row['Importe'].replace(',','.')) > 0:
 				extra_array[1][8] = float(row['Importe'].replace(',','.'))*0.25
@@ -587,8 +597,10 @@ for row in lines[::-1]:
 	# rule banco
 	if ("COMISION EMISION TRANSF".casefold() in row['Concepto'].casefold() \
 	or "LIQUIDACION AHORRO".casefold() in row['Concepto'].casefold() \
-	or "COMISION MANTENIM".casefold() in row['Concepto'].casefold()) \
-	and float(row['Importe'].replace(',','.')) <= 0:
+	or "COMISION MANTENIM".casefold() in row['Concepto'].casefold() \
+	or "INGRESO EN CORREOS".casefold() in row['Concepto'].casefold() \
+	or "COMIS. INGRESO GIRO POSTAL CORREOS".casefold() in row['Concepto'].casefold()) :
+	# and float(row['Importe'].replace(',','.')) <= 0:
 		array[1] = "Gasto"
 		array[3] = "Banco"
 	# rule agua
@@ -685,6 +697,11 @@ for row in lines[::-1]:
 	if "mic responsabilidad civil" in row['Concepto'].casefold() and array[4]=="" and array[5]=="" and array[6]=="":
 		array[1] = "Gasto"
 		array[3] = "Seguro Responsabilidad Civil"
+	
+	# cuotas redes varias
+	if "REAS NAVARRA CUOTA ANUAL REAS".casefold() in row['Concepto'].casefold():
+		array[1] = "Gasto"
+		array[3] = "Cuotas redes varias"
 
 	print(array)
 	data.append(array)

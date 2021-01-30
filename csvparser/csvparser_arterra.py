@@ -3,7 +3,12 @@ Hola a todas,
 Os recuerdo que desde contabilidad pedimos que las transferencias a Arterra se hagan de una forma determinada. Hay novedades en la plantilla!!
  
 Recuerdo que la vivienda se debería pagar hasta el día 5 de cada mes y que si tenéis más de un mes de deuda os corresponde poneros en contacto con contabilidad para plantear un escenario de cómo se va a saldar esa deuda y cuando.
-Aquí los detalles de la cuenta: Nombre: Asociación Arterra BizimoduIBAN: ES97 1491 0001 2921 1057 3728BIC: TRIOESMMXXX 
+Aquí los detalles de la cuenta: 
+
+Nombre: Asociación Arterra Bizimodu
+IBAN: ES97 1491 0001 2921 1057 3728
+BIC: TRIOESMMXXX 
+
 Idealmente el fondo de solidaridad se debería pagar en un pago único, pero si no se puede, se puede ir pagando mensualmente. Recuerdo que el fondo de solidaridad corresponde a 60€/adulto en integración o integrado.
 
 Es muy fácil hacerlo como plantilla si accedeis a vuestro banco online (os puedo ayudar si lo necesitáis). Idealmente se podría establecer la vivienda/proyecto como transferencia periódica y lo demás se puede ir haciendo a mano mes a mes.
@@ -93,7 +98,7 @@ for index, s in enumerate(fuegos, start = 1):
 		s = "Ana Lucia Perez"
 	# Ibai
 	if "Ibai" in s:
-		s = "Ibai Guemes"
+		s = "Guemes Canada Ibai"
 	# Lore
 	if "Lorena" in s:
 		s = "Lorena Mompel"
@@ -127,9 +132,9 @@ for index, s in enumerate(fuegos, start = 1):
 	# Nadia
 	if "Nadia" in s:
 		s = "NADIA CALDERON DELGADO"
-	# Leona
+	# Leona y Ione
 	if "Ione y Leona" in s:
-		s = "Ione y Leona Berengo"
+		s = "Ione Andia Celaya y Leona Berengo"
 	fuegos_lower.insert(index,unidecode.unidecode(s.casefold()))
 for index, s in enumerate(personas, start = 1):
 	# Christian le pongo apellidos para que lo encuentre
@@ -167,7 +172,7 @@ for index, s in enumerate(personas, start = 1):
 		s = "Ana Lucia Perez"
 	# Ibai
 	if "Ibai" in s:
-		s = "Ibai Guemes"
+		s = "Guemes Canada Ibai"
 	# Lore
 	if "Lorena" in s:
 		s = "Lorena Mompel"
@@ -213,6 +218,9 @@ for index, s in enumerate(personas, start = 1):
 	# Leona
 	if "Leona" in s:
 		s = "Leona Berengo"
+	# Ione
+	if "Ione" in s:
+		s = "Ione Andia Celaya"
 	personas_lower.insert(index,unidecode.unidecode(s.casefold()))
 
 # print(fuegos_lower)

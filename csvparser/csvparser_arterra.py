@@ -13,7 +13,7 @@ Idealmente el fondo de solidaridad se debería pagar en un pago único, pero si 
 
 Es muy fácil hacerlo como plantilla si accedeis a vuestro banco online (os puedo ayudar si lo necesitáis). Idealmente se podría establecer la vivienda/proyecto como transferencia periódica y lo demás se puede ir haciendo a mano mes a mes.
  
-Esta es la plantilla
+Esta es la plantilla para poner en el concepto de pago
 
 AB1.Fuego.V:XXX.C:YYY.P:ZZZ.E:XXX.I:YYY.F:ZZZ.D:XXX.S:YYY.B:ZZZ
 
@@ -26,15 +26,19 @@ Notas sobre puntuación: 
 * Nota 6: las notas 4 y 5 son combinables :) 
 
 Notas sobre el significado de las letras: 
-V es cuotas de vivienda (va seguido de dos puntos (opciona) y la cantidad)
-C es cuotas de comedor (va seguido de dos puntos (opciona) y la cantidad)
-P es cuotas de proyecto (va seguido de dos puntos (opciona) y la cantidad)
-E es cuotas de almuerzos (va seguido de dos puntos (opciona) y la cantidad)
-I es cuota de integración (va seguido de dos puntos (opciona) y la cantidad)
-F es fondo de solidaridad (va seguido de dos puntos (opciona) y la cantidad)
+V es cuotas de vivienda (va seguido de dos puntos (opciona) y la cantidad). A pagar hasta el dia 5 de cada mes en curso
+C es cuotas de comedor (va seguido de dos puntos (opciona) y la cantidad). A pagar a mes vencido
+P es cuotas de proyecto (va seguido de dos puntos (opciona) y la cantidad). A pagar hasta el dia 5 de cada mes en curso
+E es cuotas de almuerzos (va seguido de dos puntos (opciona) y la cantidad). A pagar a mes vencido
+I es cuota de integración (va seguido de dos puntos (opciona) y la cantidad). A acordar con Contabilidad la mejor manera de pagar si se quiere pagar a plazos
+F es fondo de solidaridad (va seguido de dos puntos (opciona) y la cantidad). Fondo de solidaridad puntual implantado en 2020
 D es una donación (va seguido de dos puntos (opciona) y la cantidad)
 S es visita participativa [vivienda] (va seguido de dos puntos (opciona) y la cantidad)
 B es bote [comedor de visitas] (va seguido de dos puntos (opciona) y la cantidad)
+
+Notas sobre visitas participativas:
+En el caso de visitas participativas podéis usar el fuego "Visita". Por ejemplo:
+AB1.Visita.S:100.B:12,5
 
 Podéis usar los elementos por separado o todos juntos en un mismo pago.
 
@@ -60,8 +64,8 @@ import logging
 from datetime import datetime
 from pyexcel_ods3 import save_data
 
-fuegos = ["Ana","Angel","Fanny y Adrián","Genny","Lide y Montxo","Lorena","Lurdes y Christian","Maria","Marta","Mauge","Miracles y Toni","Nadia","Silbia","Valen","Isa y Nahia","Alf","Jess y Tom","Stefania y Peppe","Carlos","Monica y Franco","Ibai","Iñigo","Alsu","Beñat","Moni y Tiko","Ione y Leona"]
-personas = ["Adrián","Alf","Ametz","Ana","Angel","Aratz","Chester","Christian","Eki","Fanny","Genny","Ibrahim","Isa","Jess","Lide","Lluch","Lorena","Lurdes","Manuel","Maria","Mariona","Marta","Mauge","Miracles","Montxo","Nadia","Nahia","Noa","Peppe","Salma","Selba","Silbia","Stefania","Tom","Toni","Uma","Urbi","Valen","Pepe Ecohabitar","Carlos","Monica","Franco","Ibai","Iñigo","Alsu","Beñat","Bianca","Moni","Tiko","Leona","Ione"]
+fuegos = ["Ana","Angel","Fanny y Adrián","Genny","Lide y Montxo","Lorena","Lurdes y Christian","Maria","Marta","Mauge","Miracles y Toni","Nadia","Silbia","Valen","Isa y Nahia","Alf","Jess y Tom","Stefania y Peppe","Carlos","Monica y Franco","Ibai","Iñigo","Alsu","Beñat","Moni y Tiko","Ione y Leona","Visita"]
+personas = ["Adrián","Alf","Ametz","Ana","Angel","Aratz","Chester","Christian","Eki","Fanny","Genny","Ibrahim","Isa","Jess","Lide","Lluch","Lorena","Lurdes","Manuel","Maria","Mariona","Marta","Mauge","Miracles","Montxo","Nadia","Nahia","Noa","Peppe","Salma","Selba","Silbia","Stefania","Tom","Toni","Uma","Urbi","Valen","Pepe Ecohabitar","Carlos","Monica","Franco","Ibai","Iñigo","Alsu","Beñat","Bianca","Moni","Tiko","Leona","Ione","Visita"]
 months = ["ene" , "feb" , "mar", "abr", "may", "jun" , "jul" , "ago" , "sep" , "oct" , "nov" , "dic"]
 fuegos_lower = []
 personas_lower = []
@@ -680,7 +684,7 @@ for row in lines[::-1]:
 		array[3] = "Alquiler proyectos"
 		array[6] = "Baratzan Blai"
 	# rule butano
-	if "butano" in row['Concepto'].casefold() and array[4]=="" and array[5]=="" and array[6]=="":
+	if ("butano" in row['Concepto'].casefold() or "tafagas" in row['Concepto'].casefold()) and array[4]=="" and array[5]=="" and array[6]=="":
 		array[1] = "Gasto"
 		array[3] = "Butano"
 	# rule Iñigo

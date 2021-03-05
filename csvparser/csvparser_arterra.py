@@ -64,8 +64,8 @@ import logging
 from datetime import datetime
 from pyexcel_ods3 import save_data
 
-fuegos = ["Ana","Angel","Fanny y Adrián","Genny","Lide y Montxo","Lorena","Lurdes y Christian","Maria","Marta","Mauge","Miracles y Toni","Nadia","Silbia","Valen","Isa y Nahia","Alf","Jess y Tom","Stefania y Peppe","Carlos","Monica y Franco","Ibai","Iñigo","Alsu","Beñat","Moni y Tiko","Ione y Leona","Visita"]
-personas = ["Adrián","Alf","Ametz","Ana","Angel","Aratz","Chester","Christian","Eki","Fanny","Genny","Ibrahim","Isa","Jess","Lide","Lluch","Lorena","Lurdes","Manuel","Maria","Mariona","Marta","Mauge","Miracles","Montxo","Nadia","Nahia","Noa","Peppe","Salma","Selba","Silbia","Stefania","Tom","Toni","Uma","Urbi","Valen","Pepe Ecohabitar","Carlos","Monica","Franco","Ibai","Iñigo","Alsu","Beñat","Bianca","Moni","Tiko","Leona","Ione","Visita"]
+fuegos = ["Ana","Angel","Fanny y Adrián","Genny","Lide y Montxo","Lorena","Lurdes y Christian","Maria","Marta","Mauge","Miracles y Toni","Nadia","Silbia","Valen","Isa y Nahia","Alf","Jess y Tom","Stefania y Peppe","Carlos","Monica y Franco","Ibai","Iñigo","Alsu","Beñat","Moni y Tiko","Ione y Leona","Visita","Jorge","Kavindra"]
+personas = ["Adrián","Alf","Ametz","Ana","Angel","Aratz","Chester","Christian","Eki","Fanny","Genny","Ibrahim","Isa","Jess","Lide","Lluch","Lorena","Lurdes","Manuel","Maria","Mariona","Marta","Mauge","Miracles","Montxo","Nadia","Nahia","Noa","Peppe","Salma","Selba","Silbia","Stefania","Tom","Toni","Uma","Urbi","Valen","Pepe Ecohabitar","Carlos","Monica","Franco","Ibai","Iñigo","Alsu","Beñat","Bianca","Moni","Tiko","Leona","Ione","Visita","Jorge","Kavindra"]
 months = ["ene" , "feb" , "mar", "abr", "may", "jun" , "jul" , "ago" , "sep" , "oct" , "nov" , "dic"]
 fuegos_lower = []
 personas_lower = []
@@ -139,6 +139,12 @@ for index, s in enumerate(fuegos, start = 1):
 	# Leona y Ione
 	if "Ione y Leona" in s:
 		s = "Ione Andia Celaya y Leona Berengo"
+	# Jorge
+	if "Jorge" in s:
+		s = "JORGE ALONSO MONZON"
+	# Kavindra
+	if "Kavindra" in s:
+		s = "DANIEL PASTOR HERAS"
 	fuegos_lower.insert(index,unidecode.unidecode(s.casefold()))
 for index, s in enumerate(personas, start = 1):
 	# Christian le pongo apellidos para que lo encuentre
@@ -225,6 +231,12 @@ for index, s in enumerate(personas, start = 1):
 	# Ione
 	if "Ione" in s:
 		s = "Ione Andia Celaya"
+	# Jorge
+	if "Jorge" in s:
+		s = "JORGE ALONSO MONZON"
+	# Kavindra
+	if "Kavindra" in s:
+		s = "DANIEL PASTOR HERAS"
 	personas_lower.insert(index,unidecode.unidecode(s.casefold()))
 
 # print(fuegos_lower)

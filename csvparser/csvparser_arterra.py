@@ -1,58 +1,41 @@
 """
 Hola a todas,
-Os recuerdo que desde contabilidad pedimos que las transferencias a Arterra se hagan de una forma determinada. Hay novedades en la plantilla!!
+Os recuerdo que desde C.O. Contabilidad pedimos que las transferencias a Arterra se hagan de una forma determinada, tanto la gente de casa, como visitas o pagos de eventos. 
  
-Recuerdo que la vivienda se debería pagar hasta el día 5 de cada mes y que si tenéis más de un mes de deuda os corresponde poneros en contacto con contabilidad para plantear un escenario de cómo se va a saldar esa deuda y cuando.
 Aquí los detalles de la cuenta: 
 
 Nombre: Asociación Arterra Bizimodu
 IBAN: ES97 1491 0001 2921 1057 3728
 BIC: TRIOESMMXXX 
-
-Idealmente el fondo de solidaridad se debería pagar en un pago único, pero si no se puede, se puede ir pagando mensualmente. Recuerdo que el fondo de solidaridad corresponde a 60€/adulto en integración o integrado.
-
-Es muy fácil hacerlo como plantilla si accedeis a vuestro banco online (os puedo ayudar si lo necesitáis). Idealmente se podría establecer la vivienda/proyecto como transferencia periódica y lo demás se puede ir haciendo a mano mes a mes.
- 
-Esta es la plantilla para poner en el concepto de pago
+Esta es la plantilla para poner en el concepto de pago:
 
 AB1.Fuego.V:XXX.C:YYY.P:ZZZ.E:XXX.I:YYY.F:ZZZ.D:XXX.S:YYY.B:ZZZ
-
-Notas sobre puntuación: 
-* Nota 1: Fijaos que entre elementos no hay espacios sino que hay puntos.
-* Nota 2: Los decimales en las cantidades se ponen con coma baja o alta: 32,50 o 32'50. No uséis punto por favor ya que se usa como separador (ni acento tampoco).
-* Nota 3: En caso de que vuestro banco no admita comas "," o " ' ", evitad pagar cosas fraccionadas y redondead la cantidad
-* Nota 4: los dos puntos después de la letra son opcionales en caso de que vuestro banco no permita ese caráctere.g. AB1.Fuego.VXXX.CYYY.PZZZ.EXXX.IYYY.FZZZ.DXXX.SYYY.BZZZ
-* Nota 5: si vuestro banco no os permite usar el punto "." podeis usar dos paréntesis "()"e.g. AB1()Fuego()V:XXX()C:YYY()P:ZZZ()E:XXX()I:YYY()F:ZZZ()D:XXX()S:YYY()B:ZZZ
-* Nota 6: las notas 4 y 5 son combinables :) 
-
-Notas sobre el significado de las letras: 
-V es cuotas de vivienda (va seguido de dos puntos (opciona) y la cantidad). A pagar hasta el dia 5 de cada mes en curso
-C es cuotas de comedor (va seguido de dos puntos (opciona) y la cantidad). A pagar a mes vencido
-P es cuotas de proyecto (va seguido de dos puntos (opciona) y la cantidad). A pagar hasta el dia 5 de cada mes en curso
-E es cuotas de almuerzos (va seguido de dos puntos (opciona) y la cantidad). A pagar a mes vencido
-I es cuota de integración (va seguido de dos puntos (opciona) y la cantidad). A acordar con Contabilidad la mejor manera de pagar si se quiere pagar a plazos
-F es fondo de solidaridad (va seguido de dos puntos (opciona) y la cantidad). Fondo de solidaridad puntual implantado en 2020
-D es una donación (va seguido de dos puntos (opciona) y la cantidad)
-S es visita participativa [vivienda] (va seguido de dos puntos (opciona) y la cantidad)
-B es bote [comedor de visitas] (va seguido de dos puntos (opciona) y la cantidad)
-
-Notas sobre visitas participativas:
-En el caso de visitas participativas podéis usar el fuego "Visita". Por ejemplo:
-AB1.Visita.S:100.B:12,5
-
+Usar la plantilla es muy fácil si accedéis a vuestro banco online (os puedo ayudar si lo necesitáis). Idealmente se podría establecer la vivienda/proyecto como transferencia periódica y lo demás se puede ir haciendo a mano mes a mes. La mayoría de bancos también ofrecen la posibilidad de guardar una transferencia como favorita, de forma que no tengáis que recordar este código cada vez. 
 Podéis usar los elementos por separado o todos juntos en un mismo pago.
 
 Si queréis añadir algo porque lo necesitáis como concepto lo podéis añadir después del código separado por un espacio
 
-Ejemplos:
-
-* AB1.Angel.V:300.E:20.F:60
+Notas sobre puntuación: 
+Nota 1: Fijaos que entre elementos no hay espacios sino que hay puntos.Nota 2: Los decimales en las cantidades se ponen con coma baja o alta: 32,50 o 32'50. No uséis punto por favor ya que se usa como separador (ni acento tampoco).Nota 3: En caso de que vuestro banco no admita comas "," o " ' ", evitad pagar cosas fraccionadas y redondead la cantidadNota 4: los dos puntos después de la letra son opcionales en caso de que vuestro banco no permita ese carácter p.ej. AB1.Fuego.VXXX.CYYY.PZZZ.EXXX.IYYY.FZZZ.DXXX.SYYY.BZZZNota 5: si vuestro banco no os permite usar el punto "." podeis usar dos paréntesis "()". p. ej.  AB1()Fuego()V:XXX()C:YYY()P:ZZZ()E:XXX()I:YYY()F:ZZZ()D:XXX()S:YYY()B:ZZZNota 6: las notas 4 y 5 son combinables :) 
+p. ej. 
+AB1()Fuego()VXXX()CYYY()PZZZ()EXXX()IYYY()FZZZ()DXXX()SYYY()BZZZ
+Notas sobre el significado de las letras: 
+V corresponde a cuotas de vivienda (va seguido de dos puntos (opcional) y la cantidad). A pagar hasta el dia 5 de cada mes en curso. Si tenéis más de un mes de deuda os corresponde poneros en contacto con C.O. Contabilidad para plantear un escenario de cómo se va a saldar esa deuda y cuando.C corresponde a cuotas de comedor (va seguido de dos puntos (opcional) y la cantidad). A pagar a mes vencidoP corresponde a cuotas de proyecto emprendedor (va seguido de dos puntos (opcional) y la cantidad). A pagar hasta el dia 5 de cada mes en curso. Si tenéis más de un mes de deuda os corresponde poneros en contacto con C.O. Contabilidad para plantear un escenario de cómo se va a saldar esa deuda y cuando.E corresponde a cuotas de almuerzos (va seguido de dos puntos (opcional) y la cantidad). A pagar a mes vencidoI corresponde a cuota de integración (va seguido de dos puntos (opcional) y la cantidad). A pagar por la gente que entra a integración. A acordar con Contabilidad la mejor manera de pagar si se quiere pagar a plazosF corresponde a fondo de solidaridad (va seguido de dos puntos (opcional) y la cantidad). Fondo de solidaridad puntual implantado en 2020. D corresponde a una donación (va seguido de dos puntos (opcional) y la cantidad). Gracias de todo corazón :)S corresponde a visita participativa [vivienda] (va seguido de dos puntos (opcional) y la cantidad)B corresponde a bote [comedor de visitas] (va seguido de dos puntos (opcional) y la cantidad)Notas sobre pago de visitas participativas:En el caso de visitas participativas podéis usar el fuego "Visita". Por ejemplo:
+AB1.Visita.S:100.B:12,5
+Notas sobre pago de encuentros:
+En el caso de encuentros no hace falta usar el código ab1. 
+Sí que pedimos que C.O. Coordinación de Centro de Encuentros defina un nombre fijo del evento p.ej. "facilitación abril 21".Las personas que paguen a través de banco lo hagan poniendo en el concepto: 
+"Encuentro Arterra [nombre evento]"
+p.ej. Encuentro Arterra facilitación abril 21
+Antes y después se pueden añadir más cosas en el concepto
+p.ej. Encuentro Arterra facilitación abril 21 Juan PalomoEjemplos:* AB1.Angel.V:300.E:20.F:60
 * AB1.montxo-lide.C:46 mensaje que necesitan montxo y lide
 * AB1.Ana.V:282.P:50
 * AB1.Mauge.V:250.C:50.P:20
 * AB1.Valen.V:250.C:40.F:60
 * AB1.monica-franco.B:30 Comidas visitas
 * AB1.Peppe.D:67
+* AB1.Visita.S:100.B:12,5* Encuentro Arterra facilitación abril 21 Juan Palomo
 """
 # execute with python 3!!
 import csv
@@ -64,195 +47,25 @@ import logging
 from datetime import datetime
 from pyexcel_ods3 import save_data
 
-fuegos = ["Ana","Angel","Fanny y Adrián","Genny","Lide y Montxo","Lorena","Lurdes y Christian","Maria","Marta","Mauge","Miracles y Toni","Nadia","Silbia","Valen","Isa y Nahia","Alf","Jess y Tom","Stefania y Peppe","Carlos","Monica y Franco","Ibai","Iñigo","Alsu","Beñat","Moni y Tiko","Ione y Leona","Visita","Jorge","Kavindra"]
-personas = ["Adrián","Alf","Ametz","Ana","Angel","Aratz","Chester","Christian","Eki","Fanny","Genny","Ibrahim","Isa","Jess","Lide","Lluch","Lorena","Lurdes","Manuel","Maria","Mariona","Marta","Mauge","Miracles","Montxo","Nadia","Nahia","Noa","Peppe","Salma","Selba","Silbia","Stefania","Tom","Toni","Uma","Urbi","Valen","Pepe Ecohabitar","Carlos","Monica","Franco","Ibai","Iñigo","Alsu","Beñat","Bianca","Moni","Tiko","Leona","Ione","Visita","Jorge","Kavindra"]
-months = ["ene" , "feb" , "mar", "abr", "may", "jun" , "jul" , "ago" , "sep" , "oct" , "nov" , "dic"]
-fuegos_lower = []
-personas_lower = []
-for index, s in enumerate(fuegos, start = 1):
-	# Christian le pongo apellidos para que lo encuentre
-	if "Lurdes y Christian" in s:
-		s = "Lurdes y Cristian Gomez Marquina"
-	# Tom es ahora Tomas Feeney
-	if "Jess y Tom" in s:
-		s = "Jess y Tomas Feeney"
-	# Peppe es ahora Giuseppe
-	if "Stefania y Peppe" in s:
-		s = "Giuseppe el Bahrawy y Stefania del Conte"
-	# Valen es ahora Valentin
-	if "Valen" in s:
-		s = "Juan Valentin Ruiz Lopez"
-	# Carlos es ahora Martinez Mampay Carlos Alberto
-	if "Carlos" in s:
-		s = "Martinez Mampay Carlos Alberto"
-	# Alf es ahora Alfonso Flaquer Carreras
-	if "Alf" in s:
-		s = "Alfonso Flaquer Carreras"
-	# Maria es ahora maria begona garcia erviti 
-	if "Maria" in s:
-		s = "Maria Begona Garcia Erviti"
-	# Mauge es ahora maria eugenia canada zorrilla
-	if "Mauge" in s:
-		s = "Maria Eugenia Canada Zorrilla"
-	# Angel
-	if "Angel" in s:
-		s = "Angel Matilla"
-	# Ana
-	if "Ana" in s:
-		s = "Ana Lucia Perez"
-	# Ibai
-	if "Ibai" in s:
-		s = "Guemes Canada Ibai"
-	# Lore
-	if "Lorena" in s:
-		s = "Lorena Mompel"
-	# Nahia
-	if "Isa y Nahia" in s:
-		s = "Isa y Nahia Agote"
-	# Montxo
-	if "Lide y Montxo" in s:
-		s = "Lide y Montxo Gota"
-	# Genny
-	if "Genny" in s:
-		s = "Genny Carraro"
-	# Fanny y Adrián
-	if "Fanny y Adrián" in s:
-		s = "Fanny Eleonora y Adrián Areta"
-	# Miracles y Toni
-	if "Miracles y Toni" in s:
-		s = "Juana Milagros y Toni"
-	# Monica y Franco
-	if "Monica y Franco" in s:
-		s = "Monica Cuende Lozano y Franco de Sena Llobera"
-	# Alsu
-	if "Alsu" in s:
-		s = "Alsu MURATOVA MURATOVA"
-	# Moni y Tiko
-	if "Moni y Tiko" in s:
-		s = "Moni y VICENTE ESTEVE SUBIES"
-	# Beñat
-	if "Beñat" in s:
-		s = "BENAT GURMENDI CULLA"
-	# Nadia
-	if "Nadia" in s:
-		s = "NADIA CALDERON DELGADO"
-	# Leona y Ione
-	if "Ione y Leona" in s:
-		s = "Ione Andia Celaya y Leona Berengo"
-	# Jorge
-	if "Jorge" in s:
-		s = "JORGE ALONSO MONZON"
-	# Kavindra
-	if "Kavindra" in s:
-		s = "DANIEL PASTOR HERAS"
-	fuegos_lower.insert(index,unidecode.unidecode(s.casefold()))
-for index, s in enumerate(personas, start = 1):
-	# Christian le pongo apellidos para que lo encuentre
-	if "Christian" in s:
-		s = "Cristian Gomez Marquina"
-	# Tom es ahora Tomas Feeney
-	if "Tom" in s:
-		s = "Tomas Feeney"
-	# Peppe es ahora Giuseppe
-	if "Peppe" in s:
-		s = "Giuseppe el Bahrawy"
-	# Stefania es ahora Stefania del Conte
-	if "Stefania" in s:
-		s = "Stefania del Conte"
-	# Valen es ahora Valentin
-	if "Valen" in s:
-		s = "Juan Valentin Ruiz Lopez"
-	# Carlos es ahora Martinez Mampay Carlos Alberto
-	if "Carlos" in s:
-		s = "Martinez Mampay Carlos Alberto"
-	# Alf es ahora Alfonso Flaquer Carreras
-	if "Alf" in s:
-		s = "Alfonso Flaquer Carreras"
-	# Maria es ahora maria begona garcia erviti 
-	if "Maria" in s:
-		s = "Maria Begona Garcia Erviti"
-	# Mauge es ahora maria eugenia canada zorrilla
-	if "Mauge" in s:
-		s = "Maria Eugenia Canada Zorrilla"	
-	# Angel
-	if "Angel" in s:
-		s = "Angel Matilla"
-	# Ana
-	if "Ana" in s:
-		s = "Ana Lucia Perez"
-	# Ibai
-	if "Ibai" in s:
-		s = "Guemes Canada Ibai"
-	# Lore
-	if "Lorena" in s:
-		s = "Lorena Mompel"
-	# Nahia
-	if "Nahia" in s:
-		s = "Nahia Agote"
-	# Montxo
-	if "Montxo" in s:
-		s = "Montxo Gota"
-	# Genny
-	if "Genny" in s:
-		s = "Genny Carraro"
-	# Fannyn
-	if "Fanny" in s:
-		s = "Mw F"
-	# Adrián
-	if "Adrián" in s:
-		s = "Adrián Areta"
-	# Pepe Ecohabitar
-	if "Pepe Ecohabitar" in s:
-		s = "Jose Ignacio ROJAS ROJAS"
-	# Miracles
-	if "Miracles" in s:
-		s = "Juana Milagros"
-	# Monica
-	if "Monica" in s:
-		s = "Monica Cuende Lozano"
-	# Franco
-	if "Franco" in s:
-		s = "Franco de Sena Llobera"
-	# Alsu
-	if "Alsu" in s:
-		s = "Alsu MURATOVA MURATOVA"
-	# Tiko
-	if "Tiko" in s:
-		s = "VICENTE ESTEVE SUBIES"
-	# Beñat
-	if "Beñat" in s:
-		s = "BENAT GURMENDI CULLA"
-	# Nadia
-	if "Nadia" in s:
-		s = "NADIA CALDERON DELGADO"
-	# Leona
-	if "Leona" in s:
-		s = "Leona Berengo"
-	# Ione
-	if "Ione" in s:
-		s = "Ione Andia Celaya"
-	# Jorge
-	if "Jorge" in s:
-		s = "JORGE ALONSO MONZON"
-	# Kavindra
-	if "Kavindra" in s:
-		s = "DANIEL PASTOR HERAS"
-	personas_lower.insert(index,unidecode.unidecode(s.casefold()))
-
-# print(fuegos_lower)
-# print(personas_lower)
-if len(sys.argv) != 3:
-	print ("Incorrect number of arguments:\nThe correct usage is csvparser.py inputfile.csv outputfile.ods\noutputfile.ods will be created if it doesn't exist")
+if len(sys.argv) != 4:
+	print ("Incorrect number of arguments:\nThe correct usage is csvparser.py inputfilebankentries.csv inputfilepeople.csv outputfile.ods\noutputfile.ods will be created if it doesn't exist")
 	exit()
 if '.csv' in sys.argv[1]:
-	reader = csv.DictReader(open(sys.argv[1]))
-	lines = [x for x in reader]
+	readerBankEntries = csv.DictReader(open(sys.argv[1]))
+	linesBankEntries = [x for x in readerBankEntries]
 else:
-	print ("Please enter a csv formatted file as input (with extension .csv)")
+	print ("Please enter a csv formatted file as input for the bank entries (with extension .csv)")
 	exit()
-if '.ods' in sys.argv[2]:
-	if os.path.exists(sys.argv[2]):
-		os.remove(sys.argv[2])
+if '.csv' in sys.argv[2]:
+	with open(sys.argv[2], newline='') as csvfilePeople:
+		readerPeople = csv.reader(csvfilePeople, delimiter=',', quotechar='|')
+		linesPeople = [y for y in readerPeople]
+else:
+	print ("Please enter a csv formatted file as input for the people (with extension .csv)")
+	exit()
+if '.ods' in sys.argv[3]:
+	if os.path.exists(sys.argv[3]):
+		os.remove(sys.argv[3])
 	else:
 		print("The ods file does not exist and will be created")
 else:
@@ -260,8 +73,27 @@ else:
 	exit()
 
 dictionary = dict()
+months = ["ene" , "feb" , "mar", "abr", "may", "jun" , "jul" , "ago" , "sep" , "oct" , "nov" , "dic"]
+
+# parse people
+fuegos = linesPeople[0]
+fuegos.pop(0) # remove initial name in first slot
+fuegos_lower = linesPeople[1]
+fuegos_lower.pop(0) # remove initial name in first slot
+personas = linesPeople[2]
+personas.pop(0) # remove initial name in first slot
+personas_lower = linesPeople[3]
+personas_lower.pop(0) # remove initial name in first slot
+
+for index, s in enumerate(fuegos_lower):
+	fuegos_lower[index] = unidecode.unidecode(s.casefold().replace(" ", ""))
+
+for index, s in enumerate(personas_lower):
+	personas_lower[index] = unidecode.unidecode(s.casefold().replace(" ", ""))
+
+# parse bank entries
 data = [["Fecha", "Caja", "Método", "Círculo/Área", "Persona", "Fuego", "Proyecto", "Concepto", "Entrada", "Salida", "Notas"]]
-for row in lines[::-1]:
+for row in linesBankEntries[::-1]:
 	date = datetime.strptime(row['F. valor'],"%d/%m/%Y").date()
 	# generate array
 	array = [date, "", "Banco", "", "", "", "", row['Concepto'], "","",""]
@@ -333,9 +165,9 @@ for row in lines[::-1]:
 				raise Exception('Total sum of quantity elements is not correctly calculated:  {}'.format(parts))
 
 			# find fuego in list
-			name = parts[0].split()
-			if any(name[2]+" "+name[3] in s for s in fuegos_lower):
-				matching = [s for s in fuegos_lower if name[2]+" "+name[3] in s]
+			name = parts[0].replace('transf de ','').replace(' ab1','').replace(" ", "")
+			if any(name in s for s in fuegos_lower):
+				matching = [s for s in fuegos_lower if name in s]
 				indexFuegos = fuegos_lower.index(matching[0])
 				array[5] = fuegos[indexFuegos]
 			else:
@@ -343,10 +175,12 @@ for row in lines[::-1]:
 				indexFuegos = -1
 			
 			# find person in list
-			if any(name[2]+" "+name[3] in s for s in personas_lower):
-				matching = [s for s in personas_lower if name[2]+" "+name[3] in s]
+			if any(name in s for s in personas_lower):
+				#print(personas_lower)
+				matching = [s for s in personas_lower if name[2]+name[3]+name[4] in s]
 				indexPersonas = personas_lower.index(matching[0])
 				array[4] = personas[indexPersonas]
+				
 			else:
 				array[4] = ""
 				indexPersonas = -1
@@ -610,9 +444,9 @@ for row in lines[::-1]:
 		array[3] = "Alquiler vivienda"
 		# find fuego in list
 		parts = row['Concepto'].casefold().split('.')
-		name = parts[0].split()
-		if any(name[2]+" "+name[3] in s for s in fuegos_lower):
-			matching = [s for s in fuegos_lower if name[2]+" "+name[3] in s]
+		name = parts[0].replace('transf de ','').replace(' ab1','').replace(" ", "")
+		if any(name in s for s in fuegos_lower):
+			matching = [s for s in fuegos_lower if name in s]
 			array[5] = fuegos[fuegos_lower.index(matching[0])]
 	# rule caldera
 	if "huesillo" in row['Concepto'].casefold() and float(row['Importe'].replace(',','.')) < 0:
@@ -736,5 +570,5 @@ for row in lines[::-1]:
 	#reset extra array
 	extra_array = []
 dictionary.update({"Sheet 1": data})
-save_data(sys.argv[2], dictionary)
+save_data(sys.argv[3], dictionary)
 print ('\nOds file has been generated.')

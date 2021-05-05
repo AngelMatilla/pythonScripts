@@ -166,6 +166,7 @@ for row in linesBankEntries[::-1]:
 
 			# find fuego in list
 			name = parts[0].replace('transf de ','').replace(' ab1','').replace(" ", "")
+			#print(name)
 			if any(name in s for s in fuegos_lower):
 				matching = [s for s in fuegos_lower if name in s]
 				indexFuegos = fuegos_lower.index(matching[0])
@@ -439,12 +440,16 @@ for row in linesBankEntries[::-1]:
 			print("***********************")
 
 	# rule fanny (Enero C/ Abajo 1,1o) and word alquiler or renta
-	if "abajo 1, 1o" in row['Concepto'].casefold() or "abajo 1,1o" in row['Concepto'].casefold() or "renta" in row['Concepto'].casefold() or "mensualidad" in row['Concepto'].casefold():
+	if "abajo 1, 1o".casefold() in row['Concepto'].casefold() or "abajo 1,1o".casefold() in row['Concepto'].casefold() or "renta" in row['Concepto'].casefold() or "mensualidad" in row['Concepto'].casefold():
 		array[1] = "Gasto"
 		array[3] = "Alquiler vivienda"
 		# find fuego in list
 		parts = row['Concepto'].casefold().split('.')
-		name = parts[0].replace('transf de ','').replace(' ab1','').replace(" ", "")
+		name = parts[0].replace('transf de ','').replace(' ab1','').replace(" ", "").replace("c/abajo1,1o", "") \
+		.replace("enero", "").replace("febrero", "").replace("marzo", "").replace("abril", "").replace("mayo", "") \
+		.replace("junio", "").replace("julio", "").replace("agosto", "").replace("septiembre", "") \
+		.replace("octubre", "").replace("noviembre", "").replace("diciembre", "")
+		#print(name)
 		if any(name in s for s in fuegos_lower):
 			matching = [s for s in fuegos_lower if name in s]
 			array[5] = fuegos[fuegos_lower.index(matching[0])]

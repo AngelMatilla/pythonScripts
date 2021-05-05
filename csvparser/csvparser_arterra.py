@@ -168,7 +168,9 @@ for row in linesBankEntries[::-1]:
 			name = parts[0].replace('transf de ','').replace(' ab1','').replace(" ", "")
 			#print(name)
 			if any(name in s for s in fuegos_lower):
+				#print("match in fuegos")
 				matching = [s for s in fuegos_lower if name in s]
+				#print(matching)
 				indexFuegos = fuegos_lower.index(matching[0])
 				array[5] = fuegos[indexFuegos]
 			else:
@@ -177,8 +179,9 @@ for row in linesBankEntries[::-1]:
 			
 			# find person in list
 			if any(name in s for s in personas_lower):
-				#print(personas_lower)
-				matching = [s for s in personas_lower if name[2]+name[3]+name[4] in s]
+				#print("match in personas")
+				matching = [s for s in personas_lower if name in s]
+				#print(matching)
 				indexPersonas = personas_lower.index(matching[0])
 				array[4] = personas[indexPersonas]
 				

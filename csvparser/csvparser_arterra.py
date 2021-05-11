@@ -1,42 +1,34 @@
+#!/usr/bin/env python
+""" Csv Parser for Arterra Bizimodu Accounting.
+
+The Csvparser reads the information out of the bank statements coming from Triodos for Arterra. 
+
+Info on how to make a transfer:
+https://git.gen-europe.org/angel/arterra-bizimodu/-/wikis/Pagos-por-transferencia-a-Arterra
+
+Usage: 
+
+Requires pyexcel_ods3 and unidecode libraries for py3
+
+python3 ~/sources/python/csvparser/csvparser_arterra.py "/home/angel/Dropbox/Contabilidad_Arterra_2021/extractos_banco/05.mayo.csv" "/home/angel/Dropbox/Contabilidad_Arterra_2021/extractos_banco/people.csv" "/home/angel/Dropbox/Contabilidad_Arterra_2021/extractos_banco/output.ods"
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later
+version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+this program. If not, see <http://www.gnu.org/licenses/>.
 """
-Hola a todas,
-Os recuerdo que desde C.O. Contabilidad pedimos que las transferencias a Arterra se hagan de una forma determinada, tanto la gente de casa, como visitas o pagos de eventos. 
- 
-Aquí los detalles de la cuenta: 
 
-Nombre: Asociación Arterra Bizimodu
-IBAN: ES97 1491 0001 2921 1057 3728
-BIC: TRIOESMMXXX 
-Esta es la plantilla para poner en el concepto de pago:
+__author__ = "Angel Matilla"
+__contact__ = "angelmatilla@gmail.com"
+__version__ = "0.0.1"
 
-AB1.Fuego.V:XXX.C:YYY.P:ZZZ.E:XXX.I:YYY.F:ZZZ.D:XXX.S:YYY.B:ZZZ
-Usar la plantilla es muy fácil si accedéis a vuestro banco online (os puedo ayudar si lo necesitáis). Idealmente se podría establecer la vivienda/proyecto como transferencia periódica y lo demás se puede ir haciendo a mano mes a mes. La mayoría de bancos también ofrecen la posibilidad de guardar una transferencia como favorita, de forma que no tengáis que recordar este código cada vez. 
-Podéis usar los elementos por separado o todos juntos en un mismo pago.
-
-Si queréis añadir algo porque lo necesitáis como concepto lo podéis añadir después del código separado por un espacio
-
-Notas sobre puntuación: 
-Nota 1: Fijaos que entre elementos no hay espacios sino que hay puntos.Nota 2: Los decimales en las cantidades se ponen con coma baja o alta: 32,50 o 32'50. No uséis punto por favor ya que se usa como separador (ni acento tampoco).Nota 3: En caso de que vuestro banco no admita comas "," o " ' ", evitad pagar cosas fraccionadas y redondead la cantidadNota 4: los dos puntos después de la letra son opcionales en caso de que vuestro banco no permita ese carácter p.ej. AB1.Fuego.VXXX.CYYY.PZZZ.EXXX.IYYY.FZZZ.DXXX.SYYY.BZZZNota 5: si vuestro banco no os permite usar el punto "." podeis usar dos paréntesis "()". p. ej.  AB1()Fuego()V:XXX()C:YYY()P:ZZZ()E:XXX()I:YYY()F:ZZZ()D:XXX()S:YYY()B:ZZZNota 6: las notas 4 y 5 son combinables :) 
-p. ej. 
-AB1()Fuego()VXXX()CYYY()PZZZ()EXXX()IYYY()FZZZ()DXXX()SYYY()BZZZ
-Notas sobre el significado de las letras: 
-V corresponde a cuotas de vivienda (va seguido de dos puntos (opcional) y la cantidad). A pagar hasta el dia 5 de cada mes en curso. Si tenéis más de un mes de deuda os corresponde poneros en contacto con C.O. Contabilidad para plantear un escenario de cómo se va a saldar esa deuda y cuando.C corresponde a cuotas de comedor (va seguido de dos puntos (opcional) y la cantidad). A pagar a mes vencidoP corresponde a cuotas de proyecto emprendedor (va seguido de dos puntos (opcional) y la cantidad). A pagar hasta el dia 5 de cada mes en curso. Si tenéis más de un mes de deuda os corresponde poneros en contacto con C.O. Contabilidad para plantear un escenario de cómo se va a saldar esa deuda y cuando.E corresponde a cuotas de almuerzos (va seguido de dos puntos (opcional) y la cantidad). A pagar a mes vencidoI corresponde a cuota de integración (va seguido de dos puntos (opcional) y la cantidad). A pagar por la gente que entra a integración. A acordar con Contabilidad la mejor manera de pagar si se quiere pagar a plazosF corresponde a fondo de solidaridad (va seguido de dos puntos (opcional) y la cantidad). Fondo de solidaridad puntual implantado en 2020. D corresponde a una donación (va seguido de dos puntos (opcional) y la cantidad). Gracias de todo corazón :)S corresponde a visita participativa [vivienda] (va seguido de dos puntos (opcional) y la cantidad)B corresponde a bote [comedor de visitas] (va seguido de dos puntos (opcional) y la cantidad)Notas sobre pago de visitas participativas:En el caso de visitas participativas podéis usar el fuego "Visita". Por ejemplo:
-AB1.Visita.S:100.B:12,5
-Notas sobre pago de encuentros:
-En el caso de encuentros no hace falta usar el código ab1. 
-Sí que pedimos que C.O. Coordinación de Centro de Encuentros defina un nombre fijo del evento p.ej. "facilitación abril 21".Las personas que paguen a través de banco lo hagan poniendo en el concepto: 
-"Encuentro Arterra [nombre evento]"
-p.ej. Encuentro Arterra facilitación abril 21
-Antes y después se pueden añadir más cosas en el concepto
-p.ej. Encuentro Arterra facilitación abril 21 Juan PalomoEjemplos:* AB1.Angel.V:300.E:20.F:60
-* AB1.montxo-lide.C:46 mensaje que necesitan montxo y lide
-* AB1.Ana.V:282.P:50
-* AB1.Mauge.V:250.C:50.P:20
-* AB1.Valen.V:250.C:40.F:60
-* AB1.monica-franco.B:30 Comidas visitas
-* AB1.Peppe.D:67
-* AB1.Visita.S:100.B:12,5* Encuentro Arterra facilitación abril 21 Juan Palomo
-"""
 # execute with python 3!!
 import csv
 import sys

@@ -195,7 +195,7 @@ for row in linesBankEntries[::-1]:
 					array[6] = "GEN"
 				elif "ecohabitar" in row['Concepto'].casefold():
 					array[6] = "Ecohabitar"
-				elif "ana lucia" in row['Concepto'].casefold():
+				elif "ana lucia" in row['Concepto'].casefold() or "maria eugenia canada zorrilla" in row['Concepto'].casefold():
 					array[6] = "Oficina Oeste"
 				elif "biararte" in row['Concepto'].casefold() or "biar arte" in row['Concepto'].casefold():
 					array[6] = "Biar Arte"
@@ -305,7 +305,7 @@ for row in linesBankEntries[::-1]:
 							extra_array[q][6] = "GEN"
 						elif "ecohabitar" in row['Concepto'].casefold():
 							extra_array[q][6] = "Ecohabitar"
-						elif "ana lucia" in row['Concepto'].casefold():
+						elif "ana lucia" in row['Concepto'].casefold() or "maria eugenia canada zorrilla" in row['Concepto'].casefold():
 							extra_array[q][6] = "Oficina Oeste"
 						elif "biararte" in row['Concepto'].casefold() or "biar arte" in row['Concepto'].casefold():
 							extra_array[q][6] = "Biar Arte"
@@ -489,9 +489,9 @@ for row in linesBankEntries[::-1]:
 		extra_array.append(array.copy())
 		extra_array[0][3] = "Electricidad término variable"
 	# rule pagos cuotas comedor
-	if "comedor" in row['Concepto'].casefold():
-		array[1] = "Comedor"
-		array[3] = "Cuotas comedor"
+	# if "comedor" in row['Concepto'].casefold():
+		# array[1] = "Comedor"
+		# array[3] = "Cuotas comedor"
 	# rule pagos alquiler arterra
 	if "pedro enrique ramirez aragon" in row['Concepto'].casefold() or "geserlocal" in row['Concepto'].casefold():
 		array[1] = "Gasto"
@@ -518,6 +518,10 @@ for row in linesBankEntries[::-1]:
 		array[5] = "Miracles y Toni"
 		array[6] = "Ecohabitar"
 	elif "ana lucia" in row['Concepto'].casefold() and array[3] == "Alquiler proyectos":
+		array[1] = "Gasto"
+		array[3] = "Alquiler proyectos"
+		array[6] = "Oficina Oeste"
+	elif "MARIA EUGENIA CANADA ZORRILLA".casefold() in row['Concepto'].casefold() and array[3] == "Alquiler proyectos":
 		array[1] = "Gasto"
 		array[3] = "Alquiler proyectos"
 		array[6] = "Oficina Oeste"

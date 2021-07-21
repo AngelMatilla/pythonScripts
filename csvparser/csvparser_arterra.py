@@ -489,9 +489,9 @@ for row in linesBankEntries[::-1]:
 		extra_array.append(array.copy())
 		extra_array[0][3] = "Electricidad término variable"
 	# rule pagos cuotas comedor
-	# if "comedor" in row['Concepto'].casefold():
-		# array[1] = "Comedor"
-		# array[3] = "Cuotas comedor"
+	if "comedor" in row['Concepto'].casefold() and not array[3]:
+		array[1] = "Comedor"
+		array[3] = "Cuotas comedor"
 	# rule pagos alquiler arterra
 	if "pedro enrique ramirez aragon" in row['Concepto'].casefold() or "geserlocal" in row['Concepto'].casefold():
 		array[1] = "Gasto"

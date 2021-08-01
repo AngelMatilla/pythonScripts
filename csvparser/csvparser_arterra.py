@@ -91,10 +91,11 @@ for row in linesBankEntries[::-1]:
 	array = [date, "", "Banco", "", "", "", "", row['Concepto'], "","",""]
 	extra_array = []
 	# add amount either to input or output
-	if float(row['Importe'].replace(',','.')) > 0:
-		array[8] = float(row['Importe'].replace(',','.'))
+	#first remove throusand dot separator, then replace comma decimal by dot
+	if float(row['Importe'].replace('.','').replace(',','.')) > 0: 
+		array[8] = float(row['Importe'].replace('.','').replace(',','.'))
 	else:
-		array[9] = abs(float(row['Importe'].replace(',','.')))
+		array[9] = abs(float(row['Importe'].replace('.','').replace(',','.')))
 
 	# replace "()" by "." before parsing in concept
 	if "()" in row['Concepto']:

@@ -458,6 +458,7 @@ for row in linesBankEntries[::-1]:
 	or "LIQUIDACION AHORRO".casefold() in row['Concepto'].casefold() \
 	or "COMISION MANTENIM".casefold() in row['Concepto'].casefold() \
 	or "INGRESO EN CORREOS".casefold() in row['Concepto'].casefold() \
+	or "COMISION TARJETA".casefold() in row['Concepto'].casefold() \
 	or "COMIS. INGRESO GIRO POSTAL CORREOS".casefold() in row['Concepto'].casefold()) :
 	# and float(row['Importe'].replace(',','.')) <= 0:
 		array[1] = "Gasto"
@@ -486,9 +487,11 @@ for row in linesBankEntries[::-1]:
 	if "som energia" in row['Concepto'].casefold() and float(row['Importe'].replace(',','.')) < 0:
 		array[1] = "Gasto"
 		array[3] = "Electricidad término fijo"
+		array[10] = "=(136,39+35,81+49,04+6,14)*1,21  pot contr + reactiva + impuesto + alquiler"
 		# create additional line for variable term
 		extra_array.append(array.copy())
 		extra_array[0][3] = "Electricidad término variable"
+		extra_array[0][10] = "=1227,32-J726"
 	# rule pagos cuotas comedor
 	if "comedor" in row['Concepto'].casefold() and not array[3]:
 		array[1] = "Comedor"

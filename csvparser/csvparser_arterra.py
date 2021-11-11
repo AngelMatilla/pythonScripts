@@ -560,7 +560,7 @@ for row in linesBankEntries[::-1]:
 		array[1] = "Gasto"
 		array[3] = "Camión"
 	# rule Responsabilidad Civil
-	if "mic responsabilidad civil" in row['Concepto'].casefold() and array[4]=="" and array[5]=="" and array[6]=="":
+	if ("mic responsabilidad civil" in row['Concepto'].casefold() or "om suscripcion" in row['Concepto'].casefold()) and array[4]=="" and array[5]=="" and array[6]=="":
 		array[1] = "Gasto"
 		array[3] = "Seguro Responsabilidad Civil"
 	

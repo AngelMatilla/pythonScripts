@@ -202,6 +202,8 @@ for row in linesBankEntries[::-1]:
 					array[6] = "Biar Arte"
 				elif "fanny" in row['Concepto'].casefold() or "ceramica" in row['Concepto'].casefold():
 					array[6] = "Taller cerámica"
+				elif "genny" in row['Concepto'].casefold():
+					array[6] = "Oficina Genny"
 			
 			## comedor
 			elif (parts[2].strip())[0] == "c":
@@ -312,6 +314,8 @@ for row in linesBankEntries[::-1]:
 							extra_array[q][6] = "Biar Arte"
 						elif "fanny" in row['Concepto'].casefold() or "ceramica" in row['Concepto'].casefold():
 							extra_array[q][6] = "Taller cerámica"
+						elif "genny" in row['Concepto'].casefold():
+							extra_array[q][6] = "Oficina Genny"
 							
 					## comedor
 					elif x.strip()[0] == "c":

@@ -123,6 +123,7 @@ for row in linesBankEntries[::-1]:
 	# D for Donación
 	# S for Visita Participativa vivienda
 	# B for Bote Comedor
+	# G for Grupo de Consumo
 	if "ab1" in row['Concepto'].casefold():
 		try:
 			parts = row['Concepto'].casefold().split('.')
@@ -137,7 +138,7 @@ for row in linesBankEntries[::-1]:
 			# if not starting with 'v', 'c', 'p', 'e', 'f', 'd', 's' or 'b' and no ':' later -> discard it 
 			elif (((parts[2].strip()[0] != "v") and (parts[2].strip()[0] != "c") and (parts[2].strip()[0] != "p") and (parts[2].strip()[0] != "i") \
 				and (parts[2].strip()[0] != "e") and (parts[2].strip()[0] != "f") and (parts[2].strip()[0] != "d") and (parts[2].strip()[0] != "s") \
-				and (parts[2].strip()[0] != "b")) ): # or (parts[2].strip()[1] != ":")):
+				and (parts[2].strip()[0] != "b") and (parts[2].strip()[0] != "g")) ): # or (parts[2].strip()[1] != ":")):
 					raise Exception('badly formatted string. first quantity element not well formed:  {}'.format(parts))
 
 			# remove any additional element on the last part (after a space)
@@ -150,7 +151,7 @@ for row in linesBankEntries[::-1]:
 			for x in parts[2::]:
 				if ((((x.strip())[0] == "v") or ((x.strip())[0] == "c") or ((x.strip())[0] == "p") or ((x.strip())[0] == "i") \
 					or ((x.strip())[0] == "e") or ((x.strip())[0] == "f") or ((x.strip())[0] == "d") or ((x.strip())[0] == "s") \
-					or ((x.strip())[0] == "b")) or any((x.strip())[1:4] in r for r in months)): # and (((x.strip())[1] == ":")
+					or ((x.strip())[0] == "b") or ((x.strip())[0] == "g")) or any((x.strip())[1:4] in r for r in months)): # and (((x.strip())[1] == ":")
 						numbers = re.findall(r"[-]?[\d]+[,.']?\d*",unidecode.unidecode(x))
 						for i in numbers:
 							total_sum += float(i.replace(',','.').replace('\'','.'))
@@ -239,6 +240,11 @@ for row in linesBankEntries[::-1]:
 			elif (parts[2].strip())[0] == "b":
 				array[1] = "Comedor"
 				array[3] = "Botes"
+			
+			## Grupo de Consumo
+			elif (parts[2].strip())[0] == "g":
+				array[1] = "Comedor"
+				array[3] = "Grupo de Consumo"
 
 			else:
 				raise Exception('badly formatted string. First letter of first quantity element wrong:  {}'.format(parts))
@@ -283,12 +289,13 @@ for row in linesBankEntries[::-1]:
 			# D for Donación
 			# S for Visita Participativa vivienda
 			# B for Bote Comedor
+			# G for Grupo de Consumo
 			if len(parts) > 3:
 				for q, x in enumerate(parts[3::], start=0):
 					# check if parts[3] and more contains valid formatted data, if not cancel parsing
 					# if not starting with 'v', 'c' or 'p' and no ':' later -> discard it 
 					if (((x.strip()[0] != "v") and (x.strip()[0] != "c") and (x.strip()[0] != "p") and (x.strip()[0] != "e") and (x.strip()[0] != "i") \
-						and (x.strip()[0] != "f") and (x.strip()[0] != "d") and (x.strip()[0] != "s") and (x.strip()[0] != "b"))): # or (x.strip()[1] != ":")):
+						and (x.strip()[0] != "f") and (x.strip()[0] != "d") and (x.strip()[0] != "s") and (x.strip()[0] != "b") and (x.strip()[0] != "g"))): # or (x.strip()[1] != ":")):
 							print('***Warning***: badly formatted string. Quantity element number {} not well formed:  {}'.format(q+3,parts))
 							continue
 					extra_array.append(array.copy())
@@ -351,6 +358,11 @@ for row in linesBankEntries[::-1]:
 					elif x.strip()[0] == "b":
 						extra_array[q][1] = "Comedor"
 						extra_array[q][3] = "Botes"
+					
+					## Grupo de Consumo
+					elif x.strip()[0] == "g":
+						extra_array[q][1] = "Comedor"
+						extra_array[q][3] = "Grupo de Consumo"
 					
 					else:
 						print('WARNING: badly formatted string. Skipping quantity element:  {}'.format(x))

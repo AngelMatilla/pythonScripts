@@ -1,0 +1,17 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.3.0",
+    "configurations": [
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "args": ["/home/angel/Dropbox/Contabilidad_Arterra/Contabilidad_Arterra_2022/extractos_banco/10.octubre.csv","/home/angel/Dropbox/Contabilidad_Arterra/Contabilidad_Arterra_2022/extractos_banco/people.csv","/home/angel/Dropbox/Contabilidad_Arterra/Contabilidad_Arterra_2022/extractos_banco/output.ods"],
+            "justMyCode": true
+        }
+    ]
+}

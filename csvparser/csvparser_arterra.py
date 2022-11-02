@@ -112,14 +112,14 @@ for row in linesBankEntries[::-1]:
 	if "TRANSF DE GENNY CARRARO . AB1" in row['Concepto']:
 		new_concept = row['Concepto'].replace("CARRARO . AB1","CARRARO AB1")
 		row['Concepto'] = new_concept
-		print(new_concept)
+		#print(new_concept)
 
 	#include dots instead of spaces in AB1
 	if "AB1 " in row['Concepto']:
 		indx = row['Concepto'].index("AB1")
-		print(indx)
+		#print(indx)
 		new_concept = row['Concepto'][:indx] + row['Concepto'][indx:].replace(" ",".")
-		print(new_concept)
+		#print(new_concept)
 		row['Concepto'] = new_concept
 
 	#remove last point in concepto
@@ -337,6 +337,8 @@ for row in linesBankEntries[::-1]:
 							extra_array[q][6] = "Taller cerámica"
 						elif "genny" in row['Concepto'].casefold():
 							extra_array[q][6] = "Oficina Genny"
+						elif "nahia" in row['Concepto'].casefold():
+							extra_array[q][6] = "CW Nahia"
 							
 					## comedor
 					elif x.strip()[0] == "c":

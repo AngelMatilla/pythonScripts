@@ -594,10 +594,14 @@ for row in linesBankEntries[::-1]:
 		array[1] = "Gasto"
 		array[3] = "Seguro Responsabilidad Civil"
 	
-	# cuotas redes varias
+	# rule cuotas redes varias
 	if "REAS NAVARRA CUOTA ANUAL REAS".casefold() in row['Concepto'].casefold():
 		array[1] = "Gasto"
 		array[3] = "Cuotas redes varias"
+	
+	# rule pocket money
+	if "pocket".casefold() in row['Concepto'].casefold():
+		array[1] = "PI"
 
 	print(array)
 	data.append(array)

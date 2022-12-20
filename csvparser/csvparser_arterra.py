@@ -313,6 +313,8 @@ for row in linesBankEntries[::-1]:
 							print('***Warning***: badly formatted string. Quantity element number {} not well formed:  {}'.format(q+3,parts))
 							continue
 					extra_array.append(array.copy())
+					extra_array[q][8] = ""
+					extra_array[q][9] = ""
 					
 					## vivienda
 					if x.strip()[0] == "v":
@@ -515,6 +517,10 @@ for row in linesBankEntries[::-1]:
 	if "gumiel y mendia" in row['Concepto'].casefold() and float(row['Importe'].replace(',','.')) < 0:
 		array[1] = "Comedor"
 		array[3] = "Pedidos"
+	# rule pedidos aceite
+	if "ecomatarranya" in row['Concepto'].casefold() and float(row['Importe'].replace(',','.')) < 0:
+		array[1] = "Comedor"
+		array[3] = "Pedidos"
 	# rule electricidad
 	if "som energia" in row['Concepto'].casefold() and float(row['Importe'].replace(',','.')) < 0:
 		array[1] = "Gasto"
@@ -606,8 +612,8 @@ for row in linesBankEntries[::-1]:
 		array[1] = "Gasto"
 		array[3] = "Cuotas redes varias"
 	
-	# rule pocket money
-	if "pocket".casefold() in row['Concepto'].casefold():
+	# rule ESC pocket money, sending org and travel refund
+	if "pocket money".casefold() in row['Concepto'].casefold() or "travel refund".casefold() in row['Concepto'].casefold() or "sending org".casefold() in row['Concepto'].casefold():
 		array[1] = "PI"
 
 	print(array)

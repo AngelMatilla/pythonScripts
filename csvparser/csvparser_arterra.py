@@ -439,9 +439,9 @@ for row in linesBankEntries[::-1]:
 			array[10] = row['Concepto'].casefold()[row['Concepto'].casefold().index("encuentro arterra")+len("encuentro arterra "):]
 			# add amount either to input or output
 			if float(row['Importe'].replace(',','.')) > 0:
-				array[8] = float(row['Importe'].replace(',','.'))*0.60
+				array[8] = float(row['Importe'].replace(',','.'))*0.50
 			else:
-				array[9] = abs(float(row['Importe'].replace(',','.')))*0.60
+				array[9] = abs(float(row['Importe'].replace(',','.')))*0.50
 
 			# create other two rows
 			extra_array.append(array.copy())
@@ -450,9 +450,9 @@ for row in linesBankEntries[::-1]:
 			extra_array[0][10] = row['Concepto'].casefold()[row['Concepto'].casefold().index("encuentro arterra")+len("encuentro arterra "):]
 			# add amount either to input or output
 			if float(row['Importe'].replace(',','.')) > 0:
-				extra_array[0][8] = float(row['Importe'].replace(',','.'))*0.15
+				extra_array[0][8] = float(row['Importe'].replace(',','.'))*0.25
 			else:
-				extra_array[0][9] = abs(float(row['Importe'].replace(',','.')))*0.15
+				extra_array[0][9] = abs(float(row['Importe'].replace(',','.')))*0.25
 
 			extra_array.append(array.copy())
 			extra_array[1][1] = "Comedor"

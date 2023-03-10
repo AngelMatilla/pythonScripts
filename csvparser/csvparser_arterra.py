@@ -141,7 +141,8 @@ for row in linesBankEntries[::-1]:
 	if "ab1" in row['Concepto'].casefold():
 		try:
 			parts = row['Concepto'].casefold().split('.')
-			# print(parts)
+			#print(row['Concepto'].casefold())
+			#print(parts)
 			# parts have to be at least 3: 'transferencia de xxx ab1', '<fuego>', '<quantity element>' (e.g. v:200 or p:45 or c:45,76)
 			if (len(parts) < 3):
 				raise Exception('badly formatted string. Not using point separation:  {}'.format(parts))
@@ -173,7 +174,10 @@ for row in linesBankEntries[::-1]:
 				raise Exception('Total sum of quantity elements is not correctly calculated:  {}'.format(parts))
 
 			# find fuego in list
-			name = parts[0].replace('transf de ','').replace(' ab1','').replace(" ", "")
+			#print(parts[0])
+			d = " "
+			nameTemp = parts[0].replace('transf de ','').replace(' ab1','')
+			name = d.join(nameTemp.split(d, 3)[:3]).replace(" ", "") #Returns nameTemp truncated at the 3rd occurrence of the delimiter d, without spaces
 			#print(name)
 			if any(name in s for s in fuegos_lower):
 				#print("match in fuegos")
@@ -211,7 +215,7 @@ for row in linesBankEntries[::-1]:
 					array[6] = "GEN"
 				elif "ecohabitar" in row['Concepto'].casefold():
 					array[6] = "Ecohabitar"
-				elif "ana lucia" in row['Concepto'].casefold() or "maria eugenia canada zorrilla" in row['Concepto'].casefold():
+				elif "ana lucia" in row['Concepto'].casefold() or "maria eugenia" in row['Concepto'].casefold():
 					array[6] = "Oficina Oeste"
 				elif "biararte" in row['Concepto'].casefold() or "biar arte" in row['Concepto'].casefold():
 					array[6] = "Biar Arte"
@@ -331,7 +335,7 @@ for row in linesBankEntries[::-1]:
 							extra_array[q][6] = "GEN"
 						elif "ecohabitar" in row['Concepto'].casefold():
 							extra_array[q][6] = "Ecohabitar"
-						elif "ana lucia" in row['Concepto'].casefold() or "maria eugenia canada zorrilla" in row['Concepto'].casefold():
+						elif "ana lucia" in row['Concepto'].casefold() or "maria eugenia" in row['Concepto'].casefold():
 							extra_array[q][6] = "Oficina Oeste"
 						elif "biararte" in row['Concepto'].casefold() or "biar arte" in row['Concepto'].casefold():
 							extra_array[q][6] = "Biar Arte"
@@ -619,8 +623,8 @@ for row in linesBankEntries[::-1]:
 	print(array)
 	data.append(array)
 	if len(extra_array) > 0:
-		for row in extra_array:
-			print(row)
+		for idx, row in enumerate(extra_array):
+			print(extra_array[idx])
 			data.append(row)
 	#reset extra array
 	extra_array = []

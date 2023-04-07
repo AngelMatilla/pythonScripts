@@ -177,7 +177,7 @@ for row in linesBankEntries[::-1]:
 			#print(parts[0])
 			d = " "
 			nameTemp = parts[0].replace('transf de ','').replace(' ab1','')
-			name = d.join(nameTemp.split(d, 3)[:3]).replace(" ", "") #Returns nameTemp truncated at the 3rd occurrence of the delimiter d, without spaces
+			name = d.join(nameTemp.split(d, 2)[:2]).replace(" ", "") #Returns nameTemp truncated at the 2nd occurrence of the delimiter d, without spaces
 			#print(name)
 			if any(name in s for s in fuegos_lower):
 				#print("match in fuegos")

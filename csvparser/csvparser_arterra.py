@@ -477,15 +477,15 @@ for row in linesBankEntries[::-1]:
 				extra_array[1][9] = abs(float(row['Importe'].replace(',','.')))*0.20
 
 			extra_array.append(array.copy())
-			extra_array[1][1] = "Gasto"
-			extra_array[1][3] = "Alquiler proyectos"
-			extra_array[1][6] = "Baratzan Blai"
-			extra_array[1][10] = row['Concepto'].casefold()[row['Concepto'].casefold().index("encuentro arterra")+len("encuentro arterra "):]
+			extra_array[2][1] = "Gasto"
+			extra_array[2][3] = "Alquiler proyectos"
+			extra_array[2][6] = "Baratzan Blai"
+			extra_array[2][10] = row['Concepto'].casefold()[row['Concepto'].casefold().index("encuentro arterra")+len("encuentro arterra "):]
 			# add amount either to input or output
 			if float(row['Importe'].replace(',','.')) > 0:
-				extra_array[1][8] = float(row['Importe'].replace(',','.'))*0.10
+				extra_array[2][8] = float(row['Importe'].replace(',','.'))*0.10
 			else:
-				extra_array[1][9] = abs(float(row['Importe'].replace(',','.')))*0.10
+				extra_array[2][9] = abs(float(row['Importe'].replace(',','.')))*0.10
 
 		except Exception as exception:
 			print("***********************")

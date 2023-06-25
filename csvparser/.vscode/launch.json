@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
-            "args": ["/home/angel/Dropbox/Contabilidad_Arterra/Contabilidad_Arterra_2023/extractos_banco/05.mayo.csv","/home/angel/Dropbox/Contabilidad_Arterra/Contabilidad_Arterra_2023/extractos_banco/people.csv","/home/angel/Dropbox/Contabilidad_Arterra/Contabilidad_Arterra_2023/extractos_banco/output.ods"],
+            "args": ["/home/angel/Dropbox/Contabilidad_Arterra/Contabilidad_Arterra_2023/extractos_banco/06.junio.csv","/home/angel/Dropbox/Contabilidad_Arterra/Contabilidad_Arterra_2023/extractos_banco/people.csv","/home/angel/Dropbox/Contabilidad_Arterra/Contabilidad_Arterra_2023/extractos_banco/output.ods"],
             "justMyCode": true
         }
     ]

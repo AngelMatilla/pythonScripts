@@ -38,30 +38,31 @@ import re
 import logging
 from datetime import datetime
 from pyexcel_ods3 import save_data
+from colorama import Fore, Back, Style
 
 if len(sys.argv) != 4:
-	print ("Incorrect number of arguments:\nThe correct usage is csvparser.py inputfilebankentries.csv inputfilepeople.csv outputfile.ods\noutputfile.ods will be created if it doesn't exist")
+	print (Fore.RED + "Incorrect number of arguments:\nThe correct usage is csvparser.py inputfilebankentries.csv inputfilepeople.csv outputfile.ods\noutputfile.ods will be created if it doesn't exist")
 	exit()
 if '.csv' in sys.argv[1]:
 	readerBankEntries = csv.DictReader(open(sys.argv[1]))
 	linesBankEntries = [x for x in readerBankEntries]
 else:
-	print ("Please enter a csv formatted file as input for the bank entries (with extension .csv)")
+	print (Fore.RED + "Please enter a csv formatted file as input for the bank entries (with extension .csv)")
 	exit()
 if '.csv' in sys.argv[2]:
 	with open(sys.argv[2], newline='') as csvfilePeople:
 		readerPeople = csv.reader(csvfilePeople, delimiter=',', quotechar='|')
 		linesPeople = [y for y in readerPeople]
 else:
-	print ("Please enter a csv formatted file as input for the people (with extension .csv)")
+	print (Fore.RED + "Please enter a csv formatted file as input for the people (with extension .csv)")
 	exit()
 if '.ods' in sys.argv[3]:
 	if os.path.exists(sys.argv[3]):
 		os.remove(sys.argv[3])
 	else:
-		print("The ods file does not exist and will be created")
+		print(Fore.RED + "The ods file does not exist and will be created")
 else:
-	print ("Please enter a ods formatted file as output (with extension .ods)\nIf it does not exist it will be created")
+	print (Fore.RED + "Please enter a ods formatted file as output (with extension .ods)\nIf it does not exist it will be created")
 	exit()
 
 dictionary = dict()
@@ -321,7 +322,7 @@ for row in linesBankEntries[::-1]:
 					# if not starting with 'v', 'c' or 'p' and no ':' later -> discard it 
 					if (((x.strip()[0] != "v") and (x.strip()[0] != "c") and (x.strip()[0] != "p") and (x.strip()[0] != "e") and (x.strip()[0] != "i") \
 						and (x.strip()[0] != "f") and (x.strip()[0] != "d") and (x.strip()[0] != "s") and (x.strip()[0] != "b") and (x.strip()[0] != "g"))): # or (x.strip()[1] != ":")):
-							print('***Warning***: badly formatted string. Quantity element number {} not well formed:  {}'.format(q+3,parts))
+							print(Fore.RED + '***Warning***: badly formatted string. Quantity element number {} not well formed:  {}'.format(q+3,parts))
 							continue
 					extra_array.append(array.copy())
 					extra_array[q][8] = ""
@@ -394,7 +395,7 @@ for row in linesBankEntries[::-1]:
 						extra_array[q][3] = "Grupo de Consumo"
 					
 					else:
-						print('WARNING: badly formatted string. Skipping quantity element:  {}'.format(x))
+						print(Fore.RED + 'WARNING: badly formatted string. Skipping quantity element:  {}'.format(x))
 						extra_array.remove(extra_array[q])
 						continue
 					
@@ -429,9 +430,9 @@ for row in linesBankEntries[::-1]:
 					"""
 
 		except Exception as exception:
-			print("***********************")
+			print(Fore.RED + "***********************")
 			logging.error(exception)
-			print("***********************")
+			print(Fore.RED + "***********************")
 
 
 	# rule Encuentro Arterra XXXX
@@ -488,9 +489,9 @@ for row in linesBankEntries[::-1]:
 				extra_array[2][9] = abs(float(row['Importe'].replace(',','.')))*0.10
 
 		except Exception as exception:
-			print("***********************")
+			print(Fore.RED + "***********************")
 			logging.error(exception)
-			print("***********************")
+			print(Fore.RED + "***********************")
 
 	# rule fanny (Enero C/ Abajo 1,1o) and word alquiler or renta
 	if "abajo 1, 1o".casefold() in row['Concepto'].casefold() or "abajo 1,1o".casefold() in row['Concepto'].casefold() or "renta" in row['Concepto'].casefold() or "mensualidad" in row['Concepto'].casefold():
@@ -635,18 +636,23 @@ for row in linesBankEntries[::-1]:
 		array[1] = "Gasto"
 		array[3] = "Cuotas redes varias"
 	
+	# rule cooperativa cerealista
+	if "cerealista".casefold() in row['Concepto'].casefold() and array[4]=="" and array[5]=="" and array[6]=="":
+		array[1] = "Gasto"
+		array[3] = "Animales"
+	
 	# rule ESC pocket money, sending org and travel refund
 	if "pocket money".casefold() in row['Concepto'].casefold() or "travel refund".casefold() in row['Concepto'].casefold() or "sending org".casefold() in row['Concepto'].casefold():
 		array[1] = "PI"
 
-	print(array)
+	print(Style.DIM , *array, Style.RESET_ALL, sep = ";''")
 	data.append(array)
 	if len(extra_array) > 0:
 		for idx, row in enumerate(extra_array):
-			print(extra_array[idx])
+			print(Style.DIM , *extra_array[idx], Style.RESET_ALL, sep = ";''")
 			data.append(row)
 	#reset extra array
 	extra_array = []
 dictionary.update({"Sheet 1": data})
 save_data(sys.argv[3], dictionary)
-print ('\nOds file has been generated.')
+print (Style.DIM + '\nOds file has been generated.')

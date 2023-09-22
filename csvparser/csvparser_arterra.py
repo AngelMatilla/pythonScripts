@@ -213,12 +213,12 @@ for row in linesBankEntries[::-1]:
 			## vivienda
 			if (parts[2].strip())[0] == "v" :
 				array[1] = "Gasto"
-				array[3] = "Alquiler vivienda"
+				array[3] = "Cuotas vivienda"
 			
 			## proyecto
 			elif (parts[2].strip())[0] == "p":
 				array[1] = "Gasto"
-				array[3] = "Alquiler proyectos"
+				array[3] = "Cuotas proyectos"
 				if "global ecovillage network of europe" in row['Concepto'].casefold() or "GLOBAL ECOV.NETW.EUROPE".casefold() in row['Concepto'].casefold():
 					array[6] = "GEN"
 				elif "ecohabitar" in row['Concepto'].casefold():
@@ -331,14 +331,14 @@ for row in linesBankEntries[::-1]:
 					## vivienda
 					if x.strip()[0] == "v":
 						extra_array[q][1] = "Gasto"
-						extra_array[q][3] = "Alquiler vivienda"
+						extra_array[q][3] = "Cuotas vivienda"
 						extra_array[q][4] = ""
 						if indexFuegos != -1:
 							extra_array[q][5] = fuegos[indexFuegos]
 					## proyecto
 					elif x.strip()[0] == "p":
 						extra_array[q][1] = "Gasto"
-						extra_array[q][3] = "Alquiler proyectos"
+						extra_array[q][3] = "Cuotas proyectos"
 						if "global ecovillage network of europe" in row['Concepto'].casefold() or "GLOBAL ECOV.NETW.EUROPE".casefold() in row['Concepto'].casefold():
 							extra_array[q][6] = "GEN"
 						elif "ecohabitar" in row['Concepto'].casefold():
@@ -479,7 +479,7 @@ for row in linesBankEntries[::-1]:
 
 			extra_array.append(array.copy())
 			extra_array[2][1] = "Gasto"
-			extra_array[2][3] = "Alquiler proyectos"
+			extra_array[2][3] = "Cuotas proyectos"
 			extra_array[2][6] = "Baratzan Blai"
 			extra_array[2][10] = row['Concepto'].casefold()[row['Concepto'].casefold().index("encuentro arterra")+len("encuentro arterra "):]
 			# add amount either to input or output
@@ -496,7 +496,7 @@ for row in linesBankEntries[::-1]:
 	# rule fanny (Enero C/ Abajo 1,1o) and word alquiler or renta
 	if "abajo 1, 1o".casefold() in row['Concepto'].casefold() or "abajo 1,1o".casefold() in row['Concepto'].casefold() or "renta" in row['Concepto'].casefold() or "mensualidad" in row['Concepto'].casefold():
 		array[1] = "Gasto"
-		array[3] = "Alquiler vivienda"
+		array[3] = "Cuotas vivienda"
 		# find fuego in list
 		parts = row['Concepto'].casefold().split('.')
 		name = parts[0].replace('transf de ','').replace(' ab1','').replace(" ", "").replace("c/abajo1,1o", "") \
@@ -570,34 +570,34 @@ for row in linesBankEntries[::-1]:
 	# TODO: implement as part of ab1
 	if "david.p" in row['Concepto'].casefold():
 		array[1] = "Gasto"
-		array[3] = "Alquiler proyectos"
+		array[3] = "Cuotas proyectos"
 		array[6] = "Contenedor de Ruido"
 	# rule proyectos
 	if "global ecovillage network of europe" in row['Concepto'].casefold() or "GLOBAL ECOV.NETW.EUROPE".casefold() in row['Concepto'].casefold():
 		array[6] = "GEN"
 		array[1] = "Gasto"
-		array[3] = "Alquiler proyectos"
+		array[3] = "Cuotas proyectos"
 	elif "ecohabitar" in row['Concepto'].casefold():
 		array[1] = "Gasto"
-		array[3] = "Alquiler proyectos"
+		array[3] = "Cuotas proyectos"
 		array[4] = "Miracles"
 		array[5] = "Miracles y Toni"
 		array[6] = "Ecohabitar"
 	elif "ana lucia" in row['Concepto'].casefold() and array[3] == "Alquiler proyectos":
 		array[1] = "Gasto"
-		array[3] = "Alquiler proyectos"
+		array[3] = "Cuotas proyectos"
 		array[6] = "Oficina Oeste"
 	elif "MARIA EUGENIA CANADA ZORRILLA".casefold() in row['Concepto'].casefold() and array[3] == "Alquiler proyectos":
 		array[1] = "Gasto"
-		array[3] = "Alquiler proyectos"
+		array[3] = "Cuotas proyectos"
 		array[6] = "Oficina Oeste"
 	elif "biararte" in row['Concepto'].casefold() or "biar arte" in row['Concepto'].casefold():
 		array[1] = "Gasto"
-		array[3] = "Alquiler proyectos"
+		array[3] = "Cuotas proyectos"
 		array[6] = "Biar Arte"
 	elif "baratzan" in row['Concepto'].casefold():
 		array[1] = "Gasto"
-		array[3] = "Alquiler proyectos"
+		array[3] = "Cuotas proyectos"
 		array[6] = "Baratzan Blai"
 	# rule butano
 	if ("butano" in row['Concepto'].casefold() or "tafagas" in row['Concepto'].casefold()) and array[4]=="" and array[5]=="" and array[6]=="":

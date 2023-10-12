@@ -38,7 +38,8 @@ import re
 import logging
 from datetime import datetime
 from pyexcel_ods3 import save_data
-from colorama import Fore, Back, Style
+from colorama import Fore, Back, Style, init
+init(convert=True)
 
 if len(sys.argv) != 4:
 	print (Fore.RED + "Incorrect number of arguments:\nThe correct usage is csvparser.py inputfilebankentries.csv inputfilepeople.csv outputfile.ods\noutputfile.ods will be created if it doesn't exist")

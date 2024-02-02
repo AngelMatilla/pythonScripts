@@ -511,7 +511,7 @@ for row in linesBankEntries[::-1]:
 	# rule caldera
 	if "huesillo" in row['Concepto'].casefold() and float(row['Importe'].replace(',','.')) < 0:
 		array[1] = "Gasto"
-		array[3] = "Calefacción"
+		array[3] = "Huesillo"
 	# rule banco
 	if ("COMISION EMISION TRANSF".casefold() in row['Concepto'].casefold() \
 	or "LIQUIDACION AHORRO".casefold() in row['Concepto'].casefold() \

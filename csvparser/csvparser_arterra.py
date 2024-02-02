@@ -260,7 +260,7 @@ for row in linesBankEntries[::-1]:
 			## Visita Participativa vivienda
 			elif (parts[2].strip())[0] == "s":
 				array[1] = "Gasto"
-				array[3] = "Visitas participativas"
+				array[3] = "Cuotas visitas participativas"
 
 			## Bote Comedor
 			elif (parts[2].strip())[0] == "b":
@@ -382,7 +382,7 @@ for row in linesBankEntries[::-1]:
 					## Visita Participativa vivienda
 					elif x.strip()[0] == "s":
 						extra_array[q][1] = "Gasto"
-						extra_array[q][3] = "Visitas participativas"
+						extra_array[q][3] = "Cuotas visitas participativas"
 
 					## Bote Comedor
 					elif x.strip()[0] == "b":
@@ -448,7 +448,7 @@ for row in linesBankEntries[::-1]:
 		try:
 			# print(row['Concepto'].casefold()[row['Concepto'].casefold().index("encuentro arterra")+len("encuentro arterra "):])
 			array[1] = "Inversión"
-			array[3] = "Centro de encuentros"
+			array[3] = "Gestión y planificación de encuentros"
 			array[10] = row['Concepto'].casefold()[row['Concepto'].casefold().index("encuentro arterra")+len("encuentro arterra "):]
 			# add amount either to input or output
 			if float(row['Importe'].replace(',','.')) > 0:
@@ -459,7 +459,7 @@ for row in linesBankEntries[::-1]:
 			# create other three rows
 			extra_array.append(array.copy())
 			extra_array[0][1] = "Gasto"
-			extra_array[0][3] = "Centro de encuentros"
+			extra_array[0][3] = "Gestión y planificación de encuentros"
 			extra_array[0][10] = row['Concepto'].casefold()[row['Concepto'].casefold().index("encuentro arterra")+len("encuentro arterra "):]
 			# add amount either to input or output
 			if float(row['Importe'].replace(',','.')) > 0:
@@ -469,7 +469,7 @@ for row in linesBankEntries[::-1]:
 
 			extra_array.append(array.copy())
 			extra_array[1][1] = "Comedor"
-			extra_array[1][3] = "Centro de encuentros"
+			extra_array[1][3] = "Gestión y planificación de encuentros"
 			extra_array[1][10] = row['Concepto'].casefold()[row['Concepto'].casefold().index("encuentro arterra")+len("encuentro arterra "):]
 			# add amount either to input or output
 			if float(row['Importe'].replace(',','.')) > 0:

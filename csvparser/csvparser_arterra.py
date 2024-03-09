@@ -539,11 +539,15 @@ for row in linesBankEntries[::-1]:
 		array[1] = "Gasto"
 		array[3] = "Aterpe"
 	# rule pedidos comedor
-	if "gumiel y mendia" in row['Concepto'].casefold() and float(row['Importe'].replace(',','.')) < 0:
-		array[1] = "Comedor"
-		array[3] = "Pedidos"
-	# rule pedidos aceite
-	if "ecomatarranya" in row['Concepto'].casefold() and float(row['Importe'].replace(',','.')) < 0:
+	if ("gumiel y mendia" in row['Concepto'].casefold() \
+	 or "ecomatarranya" in row['Concepto'].casefold() \
+	 or "pirineki" in row['Concepto'].casefold() \
+	 or "quesos" in row['Concepto'].casefold() \
+	 or "mandarinas" in row['Concepto'].casefold() \
+	 or "naranjas" in row['Concepto'].casefold() \
+	 or "laket" in row['Concepto'].casefold() \
+	 or "citricos" in row['Concepto'].casefold()) \
+		and float(row['Importe'].replace(',','.')) < 0:
 		array[1] = "Comedor"
 		array[3] = "Pedidos"
 	# rule electricidad

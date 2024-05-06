@@ -39,31 +39,33 @@ import logging
 from datetime import datetime
 from pyexcel_ods3 import save_data
 from colorama import Fore, Back, Style, init
-init(convert=True)
+from sys import stdout
+
+init()
 
 if len(sys.argv) != 4:
-	print (Fore.RED + "Incorrect number of arguments:\nThe correct usage is csvparser.py inputfilebankentries.csv inputfilepeople.csv outputfile.ods\noutputfile.ods will be created if it doesn't exist")
+	print (Style.RESET_ALL + Fore.RED + "Incorrect number of arguments:\nThe correct usage is csvparser.py inputfilebankentries.csv inputfilepeople.csv outputfile.ods\noutputfile.ods will be created if it doesn't exist")
 	exit()
 if '.csv' in sys.argv[1]:
 	readerBankEntries = csv.DictReader(open(sys.argv[1]))
 	linesBankEntries = [x for x in readerBankEntries]
 else:
-	print (Fore.RED + "Please enter a csv formatted file as input for the bank entries (with extension .csv)")
+	print (Style.RESET_ALL + Fore.RED + "Please enter a csv formatted file as input for the bank entries (with extension .csv)")
 	exit()
 if '.csv' in sys.argv[2]:
 	with open(sys.argv[2], newline='') as csvfilePeople:
 		readerPeople = csv.reader(csvfilePeople, delimiter=',', quotechar='|')
 		linesPeople = [y for y in readerPeople]
 else:
-	print (Fore.RED + "Please enter a csv formatted file as input for the people (with extension .csv)")
+	print (Style.RESET_ALL + Fore.RED + "Please enter a csv formatted file as input for the people (with extension .csv)")
 	exit()
 if '.ods' in sys.argv[3]:
 	if os.path.exists(sys.argv[3]):
 		os.remove(sys.argv[3])
 	else:
-		print(Fore.RED + "The ods file does not exist and will be created")
+		print(Style.RESET_ALL + Fore.BLUE + "The ods file does not exist and will be created")
 else:
-	print (Fore.RED + "Please enter a ods formatted file as output (with extension .ods)\nIf it does not exist it will be created")
+	print (Style.RESET_ALL + Fore.RED + "Please enter a ods formatted file as output (with extension .ods)\nIf it does not exist it will be created")
 	exit()
 
 dictionary = dict()
@@ -85,56 +87,79 @@ for index, s in enumerate(fuegos_lower):
 for index, s in enumerate(personas_lower):
 	personas_lower[index] = unidecode.unidecode(s.casefold().replace(" ", ""))
 
+# detect whether it's Fiare or Triodos
+print (Style.RESET_ALL + Fore.BLUE + "Detect bank")
+if "Fecha Valor" in linesBankEntries[0]:
+	bankType = "Fiare"
+	fechaValor = 'Fecha Valor'
+	concepto = 'Descripción'
+	print (Style.RESET_ALL + Fore.BLUE + "Fiare")
+else:
+	bankType = "Triodos"
+	fechaValor = 'F. valor'
+	concepto = 'Concepto'
+	print (Style.RESET_ALL + Fore.BLUE + "Triodos")
+
 # parse bank entries
-data = [["Fecha", "Caja", "Método", "Círculo/Área", "Persona", "Fuego", "Proyecto", "Concepto", "Entrada", "Salida", "Notas"]]
+data = [["Fecha", "Entidad", "Caja", "Método", "Círculo/Área", "Persona", "Fuego", "Proyecto", "Concepto", "Entrada", "Salida", "Notas"]]
 for row in linesBankEntries[::-1]:
-	date = datetime.strptime(row['F. valor'],"%d/%m/%Y").date()
+	if (bankType == "Triodos"):
+		date = datetime.strptime(row[fechaValor],"%d/%m/%Y").date()
+	else:
+		date = datetime.strptime(row[fechaValor],"'%d-%m-%Y'").date()
+		if "TRF." in row[concepto]:
+			new_concept = row[concepto].replace("TRF.","transf de ")
+			row[concepto] = new_concept
+		elif "RCBO." in row[concepto]:
+			new_concept = row[concepto].replace("RCBO.","recibo de ")
+			row[concepto] = new_concept
 	# generate array
-	array = [date, "", "Banco", "", "", "", "", row['Concepto'], "","",""]
+	array = [date, "", "", "Banco", "", "", "", "", row[concepto], "","",""]
 	extra_array = []
 	# add amount either to input or output
 	#first remove throusand dot separator, then replace comma decimal by dot
 	if float(row['Importe'].replace('.','').replace(',','.')) > 0: 
-		array[8] = float(row['Importe'].replace('.','').replace(',','.'))
+		array[9] = float(row['Importe'].replace('.','').replace(',','.'))
 	else:
-		array[9] = abs(float(row['Importe'].replace('.','').replace(',','.')))
+		array[10] = abs(float(row['Importe'].replace('.','').replace(',','.')))
 
 	# replace "()" by "." before parsing in concept
-	if "()" in row['Concepto']:
-		new_concept = row['Concepto'].replace("()",".")
-		row['Concepto'] = new_concept
+	if "()" in row[concepto]:
+		new_concept = row[concepto].replace("()",".")
+		row[concepto] = new_concept
 
 	## specific replacements before the ab1 parsing 
 	#remove S.L in Ecohabitar
-	if "ECOHABITAR VISIONES SOSTENIBLES, S.L" in row['Concepto']:
-		new_concept = row['Concepto'].replace(", S.L","")
-		row['Concepto'] = new_concept
+	if "ECOHABITAR VISIONES SOSTENIBLES, S.L" in row[concepto]:
+		new_concept = row[concepto].replace(", S.L","")
+		row[concepto] = new_concept
 
 	#include dots in Genny's concept
-	# if "TRANSF DE GENNY CARRARO . AB1" in row['Concepto']:
-		#new_concept = row['Concepto'].replace("CARRARO . AB1","CARRARO AB1")
-		#row['Concepto'] = new_concept
+	# if "TRANSF DE GENNY CARRARO . AB1" in row[concepto]:
+		#new_concept = row[concepto].replace("CARRARO . AB1","CARRARO AB1")
+		#row[concepto] = new_concept
 		#print(new_concept)
 
 	#(include dots instead of spaces in AB1) and remove any dots before AB1
-	row['Concepto'] = row['Concepto'].casefold()
+	row[concepto] = row[concepto].casefold()
 
-	if "ab1" in row['Concepto']:
-		indx = row['Concepto'].index("ab1")
+	if "ab1" in row[concepto]:
+		indx = row[concepto].index("ab1")
 		#print(indx)
-		new_concept = row['Concepto'][:indx].replace(".","") + row['Concepto'][indx:]#.replace(" ",".")
+		new_concept = row[concepto][:indx].replace(".","") + row[concepto][indx:]#.replace(" ",".")
 		#print(new_concept)
-		row['Concepto'] = new_concept
+		row[concepto] = new_concept
 
 	#include dots instead of spaces in AB1
-	row['Concepto'] = row['Concepto'].casefold()
+	row[concepto] = row[concepto].casefold()
+	#print(row[concepto])
 
-	if "ab1 " in row['Concepto']:
-		indx = row['Concepto'].index("ab1")
+	if "ab1 " in row[concepto]:
+		indx = row[concepto].index("ab1")
 		#print(indx)
-		new_concept = row['Concepto'][:indx] + row['Concepto'][indx:].replace(" ",".")
+		new_concept = row[concepto][:indx] + row[concepto][indx:].replace(" ",".")
 		#print(new_concept)
-		row['Concepto'] = new_concept
+		row[concepto] = new_concept
 	
 	# rule ab1.fuego.V:XXX.C:YYY.P:ZZZ.I:ZZZ.E:ZZZ.F:ZZZ
 	# V stands for vivienda
@@ -147,10 +172,10 @@ for row in linesBankEntries[::-1]:
 	# S for Visita Participativa vivienda
 	# B for Bote Comedor
 	# G for Grupo de Consumo
-	if "ab1" in row['Concepto'].casefold():
+	if "ab1" in row[concepto].casefold():
 		try:
-			parts = row['Concepto'].casefold().split('.')
-			#print(row['Concepto'].casefold())
+			parts = row[concepto].casefold().split('.')
+			#print(row[concepto].casefold())
 			#print(parts)
 			# parts have to be at least 3: 'transferencia de xxx ab1', '<fuego>', '<quantity element>' (e.g. v:200 or p:45 or c:45,76)
 			if (len(parts) < 3):
@@ -193,9 +218,9 @@ for row in linesBankEntries[::-1]:
 				matching = [s for s in fuegos_lower if name in s]
 				#print(matching)
 				indexFuegos = fuegos_lower.index(matching[0])
-				array[5] = fuegos[indexFuegos]
+				array[6] = fuegos[indexFuegos]
 			else:
-				array[5] = ""
+				array[6] = ""
 				indexFuegos = -1
 			
 			# find person in list
@@ -204,74 +229,74 @@ for row in linesBankEntries[::-1]:
 				matching = [s for s in personas_lower if name in s]
 				#print(matching)
 				indexPersonas = personas_lower.index(matching[0])
-				array[4] = personas[indexPersonas]
+				array[5] = personas[indexPersonas]
 				
 			else:
-				array[4] = ""
+				array[5] = ""
 				indexPersonas = -1
 			# allocate first quantity element {parts[2]}
 			
 			## vivienda
 			if (parts[2].strip())[0] == "v" :
-				array[1] = "Gasto"
-				array[3] = "Cuotas vivienda"
+				array[2] = "Gasto"
+				array[4] = "Cuotas vivienda"
 			
 			## proyecto
 			elif (parts[2].strip())[0] == "p":
-				array[1] = "Gasto"
-				array[3] = "Cuotas proyectos"
-				if "global ecovillage network of europe" in row['Concepto'].casefold() or "GLOBAL ECOV.NETW.EUROPE".casefold() in row['Concepto'].casefold():
-					array[6] = "GEN"
-				elif "ecohabitar" in row['Concepto'].casefold():
-					array[6] = "Ecohabitar"
-				elif "ana lucia" in row['Concepto'].casefold() or "maria eugenia" in row['Concepto'].casefold():
-					array[6] = "Oficina Oeste"
-				elif "biararte" in row['Concepto'].casefold() or "biar arte" in row['Concepto'].casefold():
-					array[6] = "Biar Arte"
-				elif "fanny" in row['Concepto'].casefold() or "ceramica" in row['Concepto'].casefold():
-					array[6] = "Taller cerámica"
-				elif "genny" in row['Concepto'].casefold():
-					array[6] = "Oficina Genny"
+				array[2] = "Gasto"
+				array[4] = "Cuotas proyectos"
+				if "global ecovillage network of europe" in row[concepto].casefold() or "GLOBAL ECOV.NETW.EUROPE".casefold() in row[concepto].casefold():
+					array[7] = "GEN"
+				elif "ecohabitar" in row[concepto].casefold():
+					array[7] = "Ecohabitar"
+				elif "ana lucia" in row[concepto].casefold() or "maria eugenia" in row[concepto].casefold():
+					array[7] = "Oficina Oeste"
+				elif "biararte" in row[concepto].casefold() or "biar arte" in row[concepto].casefold():
+					array[7] = "Biar Arte"
+				elif "fanny" in row[concepto].casefold() or "ceramica" in row[concepto].casefold():
+					array[7] = "Taller cerámica"
+				elif "genny" in row[concepto].casefold():
+					array[7] = "Oficina Genny"
 			
 			## comedor
 			elif (parts[2].strip())[0] == "c":
-				array[1] = "Comedor"
-				array[3] = "Cuotas comedor"
+				array[2] = "Comedor"
+				array[4] = "Cuotas comedor"
 
 			## almuerzos
 			elif (parts[2].strip())[0] == "e":
-				array[1] = "Comedor"
-				array[3] = "Almuerzos"
+				array[2] = "Comedor"
+				array[4] = "Almuerzos"
 			
 			## cuota integración
 			elif (parts[2].strip())[0] == "i":
-				array[1] = "Inversión"
-				array[3] = "Inversión entrada a integración"
+				array[2] = "Inversión"
+				array[4] = "Inversión entrada a integración"
 
 			## fondo solidaridad
 			elif (parts[2].strip())[0] == "f":
-				array[1] = "Inversión"
-				array[3] = "Fondo Solidaridad Arterrana"
+				array[2] = "Inversión"
+				array[4] = "Fondo Solidaridad Arterrana"
 
 			## donación
 			elif (parts[2].strip())[0] == "d":
-				array[1] = "Inversión"
-				array[3] = "Donación"
+				array[2] = "Inversión"
+				array[4] = "Donación"
 
 			## Visita Participativa vivienda
 			elif (parts[2].strip())[0] == "s":
-				array[1] = "Gasto"
-				array[3] = "Cuotas visitas participativas"
+				array[2] = "Gasto"
+				array[4] = "Cuotas visitas participativas"
 
 			## Bote Comedor
 			elif (parts[2].strip())[0] == "b":
-				array[1] = "Comedor"
-				array[3] = "Botes"
+				array[2] = "Comedor"
+				array[4] = "Botes"
 			
 			## Grupo de Consumo
 			elif (parts[2].strip())[0] == "g":
-				array[1] = "Comedor"
-				array[3] = "Grupo de Consumo"
+				array[2] = "Comedor"
+				array[4] = "Grupo de Consumo"
 
 			else:
 				raise Exception('badly formatted string. First letter of first quantity element wrong:  {}'.format(parts))
@@ -280,9 +305,9 @@ for row in linesBankEntries[::-1]:
 			numbers = re.findall(r"[-]?[\d]+[\.,']?\d*",(unidecode.unidecode(parts[2].strip())[1:len(parts[2].strip())]))
 			if numbers:
 				if float(numbers[0].replace(',','.').replace('\'','.')) > 0:
-					array[8] = float(numbers[0].replace(',','.').replace('\'','.'))
+					array[9] = float(numbers[0].replace(',','.').replace('\'','.'))
 				else: 
-					array[9] = abs(float(numbers[0].replace(',','.').replace('\'','.')))
+					array[10] = abs(float(numbers[0].replace(',','.').replace('\'','.')))
 			else:
 				raise Exception('badly formatted string:  {}'.format(parts))
 			
@@ -291,16 +316,16 @@ for row in linesBankEntries[::-1]:
 				numbers = re.findall(r"[-]?[\d]+[\.,']?\d*",(parts[2].strip())[2:len(parts[2].strip())])
 				#print(numbers)
 				if float(numbers[0].replace(',','.').replace('\'','.')) > 0:
-					array[8] = float(numbers[0].replace(',','.').replace('\'','.'))
+					array[9] = float(numbers[0].replace(',','.').replace('\'','.'))
 				else: 
-					array[9] = abs(float(numbers[0].replace(',','.').replace('\'','.')))
+					array[10] = abs(float(numbers[0].replace(',','.').replace('\'','.')))
 			elif any((parts[2].strip())[1:4] in r for r in months):
 				numbers = re.findall(r"[-]?[\d]+[\.,'']?\d*",(parts[2].strip())[4:len(parts[2].strip())])
 				#print(numbers)
 				if float(numbers[0].replace(',','.').replace('\'','.')) > 0:
-					array[8] = float(numbers[0].replace(',','.').replace('\'','.'))
+					array[9] = float(numbers[0].replace(',','.').replace('\'','.'))
 				else: 
-					array[9] = abs(float(numbers[0].replace(',','.').replace('\'','.')))
+					array[10] = abs(float(numbers[0].replace(',','.').replace('\'','.')))
 			else: 
 				raise Exception('badly formatted string:  {}'.format(parts))
 			"""
@@ -323,80 +348,80 @@ for row in linesBankEntries[::-1]:
 					# if not starting with 'v', 'c' or 'p' and no ':' later -> discard it 
 					if (((x.strip()[0] != "v") and (x.strip()[0] != "c") and (x.strip()[0] != "p") and (x.strip()[0] != "e") and (x.strip()[0] != "i") \
 						and (x.strip()[0] != "f") and (x.strip()[0] != "d") and (x.strip()[0] != "s") and (x.strip()[0] != "b") and (x.strip()[0] != "g"))): # or (x.strip()[1] != ":")):
-							print(Fore.RED + '***Warning***: badly formatted string. Quantity element number {} not well formed:  {}'.format(q+3,parts))
+							print(Style.RESET_ALL + Fore.RED + '***Warning***: badly formatted string. Quantity element number {} not well formed:  {}'.format(q+3,parts))
 							continue
 					extra_array.append(array.copy())
-					extra_array[q][8] = ""
 					extra_array[q][9] = ""
+					extra_array[q][10] = ""
 					
 					## vivienda
 					if x.strip()[0] == "v":
-						extra_array[q][1] = "Gasto"
-						extra_array[q][3] = "Cuotas vivienda"
-						extra_array[q][4] = ""
+						extra_array[q][2] = "Gasto"
+						extra_array[q][4] = "Cuotas vivienda"
+						extra_array[q][5] = ""
 						if indexFuegos != -1:
-							extra_array[q][5] = fuegos[indexFuegos]
+							extra_array[q][6] = fuegos[indexFuegos]
 					## proyecto
 					elif x.strip()[0] == "p":
-						extra_array[q][1] = "Gasto"
-						extra_array[q][3] = "Cuotas proyectos"
-						if "global ecovillage network of europe" in row['Concepto'].casefold() or "GLOBAL ECOV.NETW.EUROPE".casefold() in row['Concepto'].casefold():
-							extra_array[q][6] = "GEN"
-						elif "ecohabitar" in row['Concepto'].casefold():
-							extra_array[q][6] = "Ecohabitar"
-						elif "ana lucia" in row['Concepto'].casefold() or "maria eugenia" in row['Concepto'].casefold():
-							extra_array[q][6] = "Oficina Oeste"
-						elif "biararte" in row['Concepto'].casefold() or "biar arte" in row['Concepto'].casefold():
-							extra_array[q][6] = "Biar Arte"
-						elif "fanny" in row['Concepto'].casefold() or "ceramica" in row['Concepto'].casefold():
-							extra_array[q][6] = "Taller cerámica"
-						elif "genny" in row['Concepto'].casefold():
-							extra_array[q][6] = "Oficina Genny"
-						elif "nahia" in row['Concepto'].casefold():
-							extra_array[q][6] = "CW Nahia"
+						extra_array[q][2] = "Gasto"
+						extra_array[q][4] = "Cuotas proyectos"
+						if "global ecovillage network of europe" in row[concepto].casefold() or "GLOBAL ECOV.NETW.EUROPE".casefold() in row[concepto].casefold():
+							extra_array[q][7] = "GEN"
+						elif "ecohabitar" in row[concepto].casefold():
+							extra_array[q][7] = "Ecohabitar"
+						elif "ana lucia" in row[concepto].casefold() or "maria eugenia" in row[concepto].casefold():
+							extra_array[q][7] = "Oficina Oeste"
+						elif "biararte" in row[concepto].casefold() or "biar arte" in row[concepto].casefold():
+							extra_array[q][7] = "Biar Arte"
+						elif "fanny" in row[concepto].casefold() or "ceramica" in row[concepto].casefold():
+							extra_array[q][7] = "Taller cerámica"
+						elif "genny" in row[concepto].casefold():
+							extra_array[q][7] = "Oficina Genny"
+						elif "nahia" in row[concepto].casefold():
+							extra_array[q][7] = "CW Nahia"
 							
 					## comedor
 					elif x.strip()[0] == "c":
-						extra_array[q][1] = "Comedor"
-						extra_array[q][3] = "Cuotas comedor"
+						extra_array[q][2] = "Comedor"
+						extra_array[q][4] = "Cuotas comedor"
 
 					## almuerzos
 					elif x.strip()[0] == "e":
-						extra_array[q][1] = "Comedor"
-						extra_array[q][3] = "Almuerzos"
+						extra_array[q][2] = "Comedor"
+						extra_array[q][4] = "Almuerzos"
 					
 					## cuota integración
 					elif x.strip()[0] == "i":
-						extra_array[q][1] = "Inversión"
-						extra_array[q][3] = "Inversión entrada a integración"
+						extra_array[q][2] = "Inversión"
+						extra_array[q][4] = "Inversión entrada a integración"
 
 					## fondo solidaridad
 					elif x.strip()[0] == "f":
-						extra_array[q][1] = "Inversión"
-						extra_array[q][3] = "Fondo Solidaridad Arterrana"
+						extra_array[q][2] = "Inversión"
+						extra_array[q][4] = "Fondo Solidaridad Arterrana"
 
 					## donación
 					elif x.strip()[0] == "d":
-						extra_array[q][1] = "Inversión"
-						extra_array[q][3] = "Donación"
+						extra_array[q][2] = "Inversión"
+						extra_array[q][4] = "Donación"
 
 					## Visita Participativa vivienda
 					elif x.strip()[0] == "s":
-						extra_array[q][1] = "Gasto"
-						extra_array[q][3] = "Cuotas visitas participativas"
+						extra_array[q][2] = "Gasto"
+						extra_array[q][4] = "Cuotas visitas participativas"
 
 					## Bote Comedor
 					elif x.strip()[0] == "b":
-						extra_array[q][1] = "Comedor"
-						extra_array[q][3] = "Botes"
+						extra_array[q][2] = "Comedor"
+						extra_array[q][4] = "Botes"
 					
 					## Grupo de Consumo
 					elif x.strip()[0] == "g":
-						extra_array[q][1] = "Comedor"
-						extra_array[q][3] = "Grupo de Consumo"
+						extra_array[q][2] = "Comedor"
+						extra_array[q][4] = "Grupo de Consumo"
 					
 					else:
-						print(Fore.RED + 'WARNING: badly formatted string. Skipping quantity element:  {}'.format(x))
+						print(Style.RESET_ALL + Fore.RED + 'WARNING: badly formatted string. Skipping quantity element:  {}'.format(x))
 						extra_array.remove(extra_array[q])
 						continue
 					
@@ -404,9 +429,9 @@ for row in linesBankEntries[::-1]:
 					numbers = re.findall(r"[-]?[\d]+[\.,']?\d*",(unidecode.unidecode(x.strip())[1:len(x.strip())]))
 					if numbers:
 						if float(numbers[0].replace(',','.').replace('\'','.')) > 0:
-							extra_array[q][8] = float(numbers[0].replace(',','.').replace('\'','.'))
+							extra_array[q][9] = float(numbers[0].replace(',','.').replace('\'','.'))
 						else: 
-							extra_array[q][9] = abs(float(numbers[0].replace(',','.').replace('\'','.')))
+							extra_array[q][10] = abs(float(numbers[0].replace(',','.').replace('\'','.')))
 					else:
 						raise Exception('badly formatted string:  {}'.format(parts))
 
@@ -415,25 +440,25 @@ for row in linesBankEntries[::-1]:
 						numbers = re.findall(r"[-]?[\d]+[\.,]?\d*",(x.strip())[2:len(x.strip())])
 						#print(numbers)
 						if float(numbers[0].replace(',','.')) > 0:
-							extra_array[q][8] = float(numbers[0].replace(',','.'))
+							extra_array[q][9] = float(numbers[0].replace(',','.'))
 						else: 
-							extra_array[q][9] = abs(float(numbers[0].replace(',','.')))
+							extra_array[q][10] = abs(float(numbers[0].replace(',','.')))
 					elif any((x.strip())[1:4] in r for r in months):
 						numbers = re.findall(r"[-]?[\d]+[\.,]?\d*",(x.strip())[4:len(x.strip())])
 						#print(numbers)
 						if float(numbers[0].replace(',','.')) > 0:
-							extra_array[q][8] = float(numbers[0].replace(',','.'))
+							extra_array[q][9] = float(numbers[0].replace(',','.'))
 						else: 
-							extra_array[q][9] = abs(float(numbers[0].replace(',','.')))
+							extra_array[q][10] = abs(float(numbers[0].replace(',','.')))
 					else: 
 						print('WARNING: badly formatted string. Skipping quantity element:  {}'.format(x))
 						continue
 					"""
 
 		except Exception as exception:
-			print(Fore.RED + "***********************")
+			print(Style.RESET_ALL + Fore.RED + "***********************")
 			logging.error(exception)
-			print(Fore.RED + "***********************")
+			print(Style.RESET_ALL + Fore.RED + "***********************")
 
 
 	# rule Encuentro Arterra XXXX
@@ -445,61 +470,61 @@ for row in linesBankEntries[::-1]:
 
 	# todo introducir nombre de encuentro en K de desglose, partir cantidad equitativamente
 
-	if "encuentro arterra" in row['Concepto'].casefold():
+	if "encuentro arterra" in row[concepto].casefold():
 		try:
-			# print(row['Concepto'].casefold()[row['Concepto'].casefold().index("encuentro arterra")+len("encuentro arterra "):])
-			array[1] = "Inversión"
-			array[3] = "Gestión y planificación de encuentros"
-			array[10] = row['Concepto'].casefold()[row['Concepto'].casefold().index("encuentro arterra")+len("encuentro arterra "):]
+			# print(row[concepto].casefold()[row[concepto].casefold().index("encuentro arterra")+len("encuentro arterra "):])
+			array[2] = "Inversión"
+			array[4] = "Gestión y planificación de encuentros"
+			array[11] = row[concepto].casefold()[row[concepto].casefold().index("encuentro arterra")+len("encuentro arterra "):]
 			# add amount either to input or output
 			if float(row['Importe'].replace(',','.')) > 0:
-				array[8] = float(row['Importe'].replace(',','.'))*0.50
+				array[9] = float(row['Importe'].replace(',','.'))*0.50
 			else:
-				array[9] = abs(float(row['Importe'].replace(',','.')))*0.50
+				array[10] = abs(float(row['Importe'].replace(',','.')))*0.50
 
 			# create other three rows
 			extra_array.append(array.copy())
-			extra_array[0][1] = "Gasto"
-			extra_array[0][3] = "Gestión y planificación de encuentros"
-			extra_array[0][10] = row['Concepto'].casefold()[row['Concepto'].casefold().index("encuentro arterra")+len("encuentro arterra "):]
+			extra_array[0][2] = "Gasto"
+			extra_array[0][4] = "Gestión y planificación de encuentros"
+			extra_array[0][11] = row[concepto].casefold()[row[concepto].casefold().index("encuentro arterra")+len("encuentro arterra "):]
 			# add amount either to input or output
 			if float(row['Importe'].replace(',','.')) > 0:
-				extra_array[0][8] = float(row['Importe'].replace(',','.'))*0.20
+				extra_array[0][9] = float(row['Importe'].replace(',','.'))*0.20
 			else:
-				extra_array[0][9] = abs(float(row['Importe'].replace(',','.')))*0.20
+				extra_array[0][10] = abs(float(row['Importe'].replace(',','.')))*0.20
 
 			extra_array.append(array.copy())
-			extra_array[1][1] = "Comedor"
-			extra_array[1][3] = "Gestión y planificación de encuentros"
-			extra_array[1][10] = row['Concepto'].casefold()[row['Concepto'].casefold().index("encuentro arterra")+len("encuentro arterra "):]
+			extra_array[1][2] = "Comedor"
+			extra_array[1][4] = "Gestión y planificación de encuentros"
+			extra_array[1][11] = row[concepto].casefold()[row[concepto].casefold().index("encuentro arterra")+len("encuentro arterra "):]
 			# add amount either to input or output
 			if float(row['Importe'].replace(',','.')) > 0:
-				extra_array[1][8] = float(row['Importe'].replace(',','.'))*0.20
+				extra_array[1][9] = float(row['Importe'].replace(',','.'))*0.20
 			else:
-				extra_array[1][9] = abs(float(row['Importe'].replace(',','.')))*0.20
+				extra_array[1][10] = abs(float(row['Importe'].replace(',','.')))*0.20
 
 			extra_array.append(array.copy())
-			extra_array[2][1] = "Gasto"
-			extra_array[2][3] = "Cuotas proyectos"
-			extra_array[2][6] = "Baratzan Blai"
-			extra_array[2][10] = row['Concepto'].casefold()[row['Concepto'].casefold().index("encuentro arterra")+len("encuentro arterra "):]
+			extra_array[2][2] = "Gasto"
+			extra_array[2][4] = "Cuotas proyectos"
+			extra_array[2][7] = "Baratzan Blai"
+			extra_array[2][11] = row[concepto].casefold()[row[concepto].casefold().index("encuentro arterra")+len("encuentro arterra "):]
 			# add amount either to input or output
 			if float(row['Importe'].replace(',','.')) > 0:
-				extra_array[2][8] = float(row['Importe'].replace(',','.'))*0.10
+				extra_array[2][9] = float(row['Importe'].replace(',','.'))*0.10
 			else:
-				extra_array[2][9] = abs(float(row['Importe'].replace(',','.')))*0.10
+				extra_array[2][10] = abs(float(row['Importe'].replace(',','.')))*0.10
 
 		except Exception as exception:
-			print(Fore.RED + "***********************")
+			print(Style.RESET_ALL + Fore.RED + "***********************")
 			logging.error(exception)
-			print(Fore.RED + "***********************")
+			print(Style.RESET_ALL + Fore.RED + "***********************")
 
 	# rule fanny (Enero C/ Abajo 1,1o) and word alquiler or renta
-	if "abajo 1, 1o".casefold() in row['Concepto'].casefold() or "abajo 1,1o".casefold() in row['Concepto'].casefold() or "renta" in row['Concepto'].casefold() or "mensualidad" in row['Concepto'].casefold():
-		array[1] = "Gasto"
-		array[3] = "Cuotas vivienda"
+	if "abajo 1, 1o".casefold() in row[concepto].casefold() or "abajo 1,1o".casefold() in row[concepto].casefold() or "renta" in row[concepto].casefold() or "mensualidad" in row[concepto].casefold():
+		array[2] = "Gasto"
+		array[4] = "Cuotas vivienda"
 		# find fuego in list
-		parts = row['Concepto'].casefold().split('.')
+		parts = row[concepto].casefold().split('.')
 		name = parts[0].replace('transf de ','').replace(' ab1','').replace(" ", "").replace("c/abajo1,1o", "") \
 		.replace("enero", "").replace("febrero", "").replace("marzo", "").replace("abril", "").replace("mayo", "") \
 		.replace("junio", "").replace("julio", "").replace("agosto", "").replace("septiembre", "") \
@@ -507,157 +532,170 @@ for row in linesBankEntries[::-1]:
 		#print(name)
 		if any(name in s for s in fuegos_lower):
 			matching = [s for s in fuegos_lower if name in s]
-			array[5] = fuegos[fuegos_lower.index(matching[0])]
+			array[6] = fuegos[fuegos_lower.index(matching[0])]
 	# rule caldera
-	if "huesillo" in row['Concepto'].casefold() and float(row['Importe'].replace(',','.')) < 0:
-		array[1] = "Gasto"
-		array[3] = "Huesillo"
+	if "huesillo" in row[concepto].casefold() and float(row['Importe'].replace(',','.')) < 0:
+		array[2] = "Gasto"
+		array[4] = "Huesillo"
 	# rule banco
-	if ("COMISION EMISION TRANSF".casefold() in row['Concepto'].casefold() \
-	or "LIQUIDACION AHORRO".casefold() in row['Concepto'].casefold() \
-	or "COMISION MANTENIM".casefold() in row['Concepto'].casefold() \
-	or "INGRESO EN CORREOS".casefold() in row['Concepto'].casefold() \
-	or "COMISION TARJETA".casefold() in row['Concepto'].casefold() \
-	or "COMIS. INGRESO GIRO POSTAL CORREOS".casefold() in row['Concepto'].casefold()) :
+	if ("COMISION EMISION TRANSF".casefold() in row[concepto].casefold() \
+	or "LIQUIDACION AHORRO".casefold() in row[concepto].casefold() \
+	or "COMISION MANTENIM".casefold() in row[concepto].casefold() \
+	or "INGRESO EN CORREOS".casefold() in row[concepto].casefold() \
+	or "COMISION TARJETA".casefold() in row[concepto].casefold() \
+	or "COMIS. INGRESO GIRO POSTAL CORREOS".casefold() in row[concepto].casefold()) :
 	# and float(row['Importe'].replace(',','.')) <= 0:
-		array[1] = "Gasto"
-		array[3] = "Banco"
+		array[2] = "Gasto"
+		array[4] = "Banco"
 	# rule agua
-	if "tasa de agua" in row['Concepto'].casefold() and float(row['Importe'].replace(',','.')) < 0:
-		array[1] = "Gasto"
-		array[3] = "Agua"
+	if "tasa de agua" in row[concepto].casefold() and float(row['Importe'].replace(',','.')) < 0:
+		array[2] = "Gasto"
+		array[4] = "Agua"
 	# rule telefonia
-	if ("telefonica de espana" in row['Concepto'].casefold() or "sisnet" in row['Concepto'].casefold()) and float(row['Importe'].replace(',','.')) < 0:
-		array[1] = "Gasto"
-		array[3] = "Internet y teléfono"
+	if ("telefonica de espana" in row[concepto].casefold() or "sisnet" in row[concepto].casefold()) and float(row['Importe'].replace(',','.')) < 0:
+		array[2] = "Gasto"
+		array[4] = "Internet y teléfono"
 	# rule web
-	if "strato" in row['Concepto'].casefold() and float(row['Importe'].replace(',','.')) < 0:
-		array[1] = "Gasto"
-		array[3] = "Web"
+	if "strato" in row[concepto].casefold() and float(row['Importe'].replace(',','.')) < 0:
+		array[2] = "Gasto"
+		array[4] = "Web"
 	# rule garbileku
-	if "garbileku" in row['Concepto'].casefold() and float(row['Importe'].replace(',','.')) < 0:
-		array[1] = "Gasto"
-		array[3] = "Aterpe"
+	if "garbileku" in row[concepto].casefold() and float(row['Importe'].replace(',','.')) < 0:
+		array[2] = "Gasto"
+		array[4] = "Aterpe"
+	# rule agroleku
+	if "agroleku" in row[concepto].casefold() and float(row['Importe'].replace(',','.')) < 0:
+		array[2] = "Gasto"
+		array[4] = "Animales"
 	# rule pedidos comedor
-	if ("gumiel y mendia" in row['Concepto'].casefold() \
-	 or "ecomatarranya" in row['Concepto'].casefold() \
-	 or "pirineki" in row['Concepto'].casefold() \
-	 or "quesos" in row['Concepto'].casefold() \
-	 or "mandarinas" in row['Concepto'].casefold() \
-	 or "naranjas" in row['Concepto'].casefold() \
-	 or "laket" in row['Concepto'].casefold() \
-	 or "citricos" in row['Concepto'].casefold()) \
+	if ("gumiel y mendia" in row[concepto].casefold() \
+	 or "ecomatarranya" in row[concepto].casefold() \
+	 or "pirineki" in row[concepto].casefold() \
+	 or "quesos" in row[concepto].casefold() \
+	 or "mandarinas" in row[concepto].casefold() \
+	 or "naranjas" in row[concepto].casefold() \
+	 or "laket" in row[concepto].casefold() \
+	 or "zazpe sca" in row[concepto].casefold() \
+	 or "azokoop" in row[concepto].casefold() \
+	 or "citricos" in row[concepto].casefold()) \
 		and float(row['Importe'].replace(',','.')) < 0:
-		array[1] = "Comedor"
-		array[3] = "Pedidos"
+		array[2] = "Comedor"
+		array[4] = "Pedidos"
 	# rule electricidad
-	if "som energia" in row['Concepto'].casefold() and float(row['Importe'].replace(',','.')) < 0:
-		array[1] = "Gasto"
-		array[3] = "Electricidad término fijo"
-		array[10] = "=(136,39+35,81+49,04+6,14)*1,21  pot contr + reactiva + impuesto + alquiler"
+	if "som energia" in row[concepto].casefold() and float(row['Importe'].replace(',','.')) < 0:
+		array[2] = "Gasto"
+		array[4] = "Electricidad término fijo"
+		array[11] = "=(136,39+35,81+49,04+6,14)*1,21  pot contr + reactiva + impuesto + alquiler"
 		# create additional line for variable term
 		extra_array.append(array.copy())
-		extra_array[0][3] = "Electricidad término variable"
-		extra_array[0][10] = "=1227,32-J726"
+		extra_array[0][4] = "Electricidad término variable"
+		extra_array[0][11] = "=1227,32-J726"
 	# rule pagos cuotas comedor
-	if "comedor" in row['Concepto'].casefold() and not array[3]:
-		array[1] = "Comedor"
-		array[3] = "Cuotas comedor"
+	if "comedor" in row[concepto].casefold() and not array[4]:
+		array[2] = "Comedor"
+		array[4] = "Cuotas comedor"
 	# rule pagos alquiler arterra
-	if "pedro enrique ramirez aragon" in row['Concepto'].casefold() or "geserlocal" in row['Concepto'].casefold():
-		array[1] = "Gasto"
-		array[3] = "Alquiler Arterra"
+	if "pedro enrique ramirez aragon" in row[concepto].casefold() or "geserlocal" in row[concepto].casefold():
+		array[2] = "Gasto"
+		array[4] = "Alquiler Arterra"
 	# rule residuos Irati
-	if "recibo mancomunidad r.s.u. irati" in row['Concepto'].casefold():
-		array[1] = "Gasto"
-		array[3] = "Residuos mancomunidad"
+	if "recibo mancomunidad r.s.u. irati" in row[concepto].casefold():
+		array[2] = "Gasto"
+		array[4] = "Residuos mancomunidad"
 	# rule Contenedor
 	# TODO: implement as part of ab1
-	if "david.p" in row['Concepto'].casefold():
-		array[1] = "Gasto"
-		array[3] = "Cuotas proyectos"
-		array[6] = "Contenedor de Ruido"
+	if "david.p" in row[concepto].casefold():
+		array[2] = "Gasto"
+		array[4] = "Cuotas proyectos"
+		array[7] = "Contenedor de Ruido"
 	# rule proyectos
-	if "global ecovillage network of europe" in row['Concepto'].casefold() or "GLOBAL ECOV.NETW.EUROPE".casefold() in row['Concepto'].casefold():
-		array[6] = "GEN"
-		array[1] = "Gasto"
-		array[3] = "Cuotas proyectos"
-	elif "ecohabitar" in row['Concepto'].casefold():
-		array[1] = "Gasto"
-		array[3] = "Cuotas proyectos"
-		array[4] = "Miracles"
-		array[5] = "Miracles y Toni"
-		array[6] = "Ecohabitar"
-	elif "ana lucia" in row['Concepto'].casefold() and array[3] == "Alquiler proyectos":
-		array[1] = "Gasto"
-		array[3] = "Cuotas proyectos"
-		array[6] = "Oficina Oeste"
-	elif "MARIA EUGENIA CANADA ZORRILLA".casefold() in row['Concepto'].casefold() and array[3] == "Alquiler proyectos":
-		array[1] = "Gasto"
-		array[3] = "Cuotas proyectos"
-		array[6] = "Oficina Oeste"
-	elif "biararte" in row['Concepto'].casefold() or "biar arte" in row['Concepto'].casefold():
-		array[1] = "Gasto"
-		array[3] = "Cuotas proyectos"
-		array[6] = "Biar Arte"
-	elif "baratzan" in row['Concepto'].casefold():
-		array[1] = "Gasto"
-		array[3] = "Cuotas proyectos"
-		array[6] = "Baratzan Blai"
+	if "global ecovillage network of europe" in row[concepto].casefold() or "GLOBAL ECOV.NETW.EUROPE".casefold() in row[concepto].casefold():
+		array[7] = "GEN"
+		array[2] = "Gasto"
+		array[4] = "Cuotas proyectos"
+	elif "ecohabitar" in row[concepto].casefold():
+		array[2] = "Gasto"
+		array[4] = "Cuotas proyectos"
+		array[5] = "Miracles"
+		array[6] = "Miracles y Toni"
+		array[7] = "Ecohabitar"
+	elif "ana lucia" in row[concepto].casefold() and array[4] == "Cuotas proyectos":
+		array[2] = "Gasto"
+		array[4] = "Cuotas proyectos"
+		array[7] = "Oficina Oeste"
+	elif "MARIA EUGENIA CANADA ZORRILLA".casefold() in row[concepto].casefold() and array[4] == "Cuotas proyectos":
+		array[2] = "Gasto"
+		array[4] = "Cuotas proyectos"
+		array[7] = "Oficina Oeste"
+	elif "biararte" in row[concepto].casefold() or "biar arte" in row[concepto].casefold():
+		array[2] = "Gasto"
+		array[4] = "Cuotas proyectos"
+		array[7] = "Biar Arte"
+	elif "baratzan" in row[concepto].casefold():
+		array[2] = "Gasto"
+		array[4] = "Cuotas proyectos"
+		array[7] = "Baratzan Blai"
 	# rule butano
-	if ("butano" in row['Concepto'].casefold() or "tafagas" in row['Concepto'].casefold()) and array[4]=="" and array[5]=="" and array[6]=="":
-		array[1] = "Gasto"
-		array[3] = "Butano"
+	if ("butano" in row[concepto].casefold() or "tafagas" in row[concepto].casefold()) and array[5]=="" and array[6]=="" and array[7]=="":
+		array[2] = "Gasto"
+		array[4] = "Butano"
 	# rule Iñigo
-	if "inigo" in row['Concepto'].casefold():
-		array[4] = "Iñigo"
+	if "inigo" in row[concepto].casefold():
 		array[5] = "Iñigo"
+		array[6] = "Iñigo"
 	# rule Pepe Ecohabitar
-	if "jose ignacio rojas rojas" in row['Concepto'].casefold():
-		array[1] = "Comedor"
-		array[3] = "Cuotas comedor"
-		array[4] = "Pepe Ecohabitar"
+	if "jose ignacio rojas rojas" in row[concepto].casefold():
+		array[2] = "Comedor"
+		array[4] = "Cuotas comedor"
+		array[5] = "Pepe Ecohabitar"
 	# rule seguro + impuesto circulación camión
-	if "helvetia compania suiza" in row['Concepto'].casefold() and array[4]=="" and array[5]=="" and array[6]=="":
-		array[1] = "Gasto"
-		array[3] = "Camión"
+	if "helvetia compania suiza" in row[concepto].casefold() and array[5]=="" and array[6]=="" and array[7]=="":
+		array[2] = "Gasto"
+		array[4] = "Camión"
 
 	# rule seguro + impuesto circulación camión
-	if "ayuntamiento del valle de eges" in row['Concepto'].casefold() and array[4]=="" and array[5]=="" and array[6]=="":
-		array[1] = "Gasto"
-		array[3] = "Camión"
+	if "ayuntamiento del valle de eges" in row[concepto].casefold() and array[5]=="" and array[6]=="" and array[7]=="":
+		array[2] = "Gasto"
+		array[4] = "Camión"
 	# rule Responsabilidad Civil
-	if ("mic responsabilidad civil" in row['Concepto'].casefold() or "om suscripcion" in row['Concepto'].casefold()) and array[4]=="" and array[5]=="" and array[6]=="":
-		array[1] = "Gasto"
-		array[3] = "Seguro Responsabilidad Civil"
+	if ("mic responsabilidad civil" in row[concepto].casefold() or "om suscripcion" in row[concepto].casefold()) and array[5]=="" and array[6]=="" and array[7]=="":
+		array[2] = "Gasto"
+		array[4] = "Seguro Responsabilidad Civil"
 	
 	# rule reas
-	if "REAS NAVARRA CUOTA ANUAL REAS".casefold() in row['Concepto'].casefold() and array[4]=="" and array[5]=="" and array[6]=="":
-		array[1] = "Gasto"
-		array[3] = "Cuotas redes varias"
+	if "REAS NAVARRA CUOTA ANUAL REAS".casefold() in row[concepto].casefold() and array[5]=="" and array[6]=="" and array[7]=="":
+		array[2] = "Gasto"
+		array[4] = "Cuotas redes varias"
 
 	# rule el salto
-	if "cuota el salto".casefold() in row['Concepto'].casefold() and array[4]=="" and array[5]=="" and array[6]=="":
-		array[1] = "Gasto"
-		array[3] = "Cuotas redes varias"
+	if "cuota el salto".casefold() in row[concepto].casefold() and array[5]=="" and array[6]=="" and array[7]=="":
+		array[2] = "Gasto"
+		array[4] = "Cuotas redes varias"
 	
 	# rule cooperativa cerealista
-	if "cerealista".casefold() in row['Concepto'].casefold() and array[4]=="" and array[5]=="" and array[6]=="":
-		array[1] = "Gasto"
-		array[3] = "Animales"
+	if "cerealista".casefold() in row[concepto].casefold() and array[5]=="" and array[6]=="" and array[7]=="":
+		array[2] = "Gasto"
+		array[4] = "Animales"
+
+	# rule hipoteca fiare
+	if "PRESTAM0018633156".casefold() in row[concepto].casefold() and array[5]=="" and array[6]=="" and array[7]=="":
+		array[2] = "Inversión"
+		array[4] = "Hipoteca"
 	
 	# rule ESC pocket money, sending org and travel refund
-	if "pocket money".casefold() in row['Concepto'].casefold() or "travel refund".casefold() in row['Concepto'].casefold() or "sending org".casefold() in row['Concepto'].casefold():
-		array[1] = "PI"
+	if "pocket money".casefold() in row[concepto].casefold() or "travel refund".casefold() in row[concepto].casefold() or "sending org".casefold() in row[concepto].casefold():
+		array[2] = "PI"
 
-	print(Style.DIM , *array, Style.RESET_ALL, sep = ";''")
+	print(Style.RESET_ALL + Style.DIM, *array, sep = ";''")
+	# for w in array:
+		# print(w + Style.RESET_ALL)
 	data.append(array)
 	if len(extra_array) > 0:
 		for idx, row in enumerate(extra_array):
-			print(Style.DIM , *extra_array[idx], Style.RESET_ALL, sep = ";''")
+			print(Style.RESET_ALL + Style.DIM , *extra_array[idx], sep = ";''")
 			data.append(row)
 	#reset extra array
 	extra_array = []
 dictionary.update({"Sheet 1": data})
 save_data(sys.argv[3], dictionary)
-print (Style.DIM + '\nOds file has been generated.')
+print (Style.RESET_ALL + Style.DIM + '\nOds file has been generated.')

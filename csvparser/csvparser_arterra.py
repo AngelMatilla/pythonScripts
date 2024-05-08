@@ -27,7 +27,7 @@ this program. If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Angel Matilla"
 __contact__ = "angelmatilla@gmail.com"
-__version__ = "0.0.1"
+__version__ = "0.1.0"
 
 # execute with python 3!!
 import csv
@@ -40,6 +40,8 @@ from datetime import datetime
 from pyexcel_ods3 import save_data
 from colorama import Fore, Back, Style, init
 from sys import stdout
+
+print("Starting csvparser")
 
 init()
 
@@ -92,7 +94,7 @@ print (Style.RESET_ALL + Fore.BLUE + "Detect bank")
 if "Fecha Valor" in linesBankEntries[0]:
 	bankType = "Fiare"
 	fechaValor = 'Fecha Valor'
-	concepto = 'Descripción'
+	concepto = 'Descripcion'
 	print (Style.RESET_ALL + Fore.BLUE + "Fiare")
 else:
 	bankType = "Triodos"
@@ -106,7 +108,7 @@ for row in linesBankEntries[::-1]:
 	if (bankType == "Triodos"):
 		date = datetime.strptime(row[fechaValor],"%d/%m/%Y").date()
 	else:
-		date = datetime.strptime(row[fechaValor],"'%d-%m-%Y'").date()
+		date = datetime.strptime(row[fechaValor],"%Y-%m-%d").date()
 		if "TRF." in row[concepto]:
 			new_concept = row[concepto].replace("TRF.","transf de ")
 			row[concepto] = new_concept
@@ -699,3 +701,5 @@ for row in linesBankEntries[::-1]:
 dictionary.update({"Sheet 1": data})
 save_data(sys.argv[3], dictionary)
 print (Style.RESET_ALL + Style.DIM + '\nOds file has been generated.')
+print("csvparser done")
+

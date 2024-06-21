@@ -27,7 +27,8 @@ else:
 	exit()
 if '.csv' in sys.argv[2]:
 	if os.path.exists(sys.argv[2]):
-		os.remove(sys.argv[2])
+		print(Style.RESET_ALL + Fore.BLUE + "The csv file already exists. Please select another target")
+		exit()
 	else:
 		print(Style.RESET_ALL + Fore.BLUE + "The csv file does not exist and will be created")
 else:
@@ -52,8 +53,8 @@ for row in o[::-1]:
 	formattedRow[0] = row[23]
 	formattedRow[1] = row[24]
 	formattedRow[2] = transfText+row[19]+" "+row[20]
-	formattedRow[3] = float(row[25])
-	formattedRow[4] = float(row[10])
+	formattedRow[3] = str(row[25]).replace('.',',')
+	formattedRow[4] = str(row[10]).replace('.',',')
 	data.append(formattedRow)
 	#reset extra array
 	formattedRow = ["","","","",""]

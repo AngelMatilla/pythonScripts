@@ -89,6 +89,9 @@ for index, s in enumerate(fuegos_lower):
 for index, s in enumerate(personas_lower):
 	personas_lower[index] = unidecode.unidecode(s.casefold().replace(" ", ""))
 
+#print(fuegos_lower)
+#print(personas_lower)
+
 # detect whether it's Fiare or Triodos
 print (Style.RESET_ALL + Fore.BLUE + "Detect bank")
 if "Fecha Valor" in linesBankEntries[0]:
@@ -213,7 +216,9 @@ for row in linesBankEntries[::-1]:
 			#print(parts[0])
 			d = " "
 			nameTemp = parts[0].replace('transf de ','').replace(' ab1','')
-			name = d.join(nameTemp.split(d, 2)[:2]).replace(" ", "") #Returns nameTemp truncated at the 2nd occurrence of the delimiter d, without spaces
+			#print(nameTemp)
+			#name = d.join(nameTemp.split(d, 2)[:2]).replace(" ", "") #Returns nameTemp truncated at the 2nd occurrence of the delimiter d, without spaces
+			name = nameTemp.replace(" ", "").replace("ñ","n") #this option works better if fuegos_lower and personas_lower has all surnames
 			#print(name)
 			if any(name in s for s in fuegos_lower):
 				#print("match in fuegos")

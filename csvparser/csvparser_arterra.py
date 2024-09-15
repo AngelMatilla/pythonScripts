@@ -685,9 +685,19 @@ for row in linesBankEntries[::-1]:
 		array[4] = "Animales"
 
 	# rule hipoteca fiare
-	if "PRESTAM0018633156".casefold() in row[concepto].casefold() and array[5]=="" and array[6]=="" and array[7]=="":
+	if ("PReSTAMO0018633156" in row[concepto].casefold() or "PRÉSTAMO0018633156" in row[concepto].casefold()) and array[5]=="" and array[6]=="" and array[7]=="":
+		array[2] = "Gasto"
+		array[4] = "Devolución hipoteca"
+
+	# rule devolucion prestamo carlos
+	if "DEVOLUCION PRESTAMO CARLOS".casefold() in row[concepto].casefold() and array[5]=="" and array[6]=="" and array[7]=="":
 		array[2] = "Inversión"
-		array[4] = "Hipoteca"
+		array[4] = "Prestamos"
+
+	# rule devolucion hipoteca
+	if "PReSTAMO0018633156".casefold() in row[concepto].casefold() and array[5]=="" and array[6]=="" and array[7]=="":
+		array[2] = "Inversión"
+		array[4] = "Prestamos"
 	
 	# rule ESC pocket money, sending org and travel refund
 	if "pocket money".casefold() in row[concepto].casefold() or "travel refund".casefold() in row[concepto].casefold() or "sending org".casefold() in row[concepto].casefold():

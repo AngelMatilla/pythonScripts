@@ -209,6 +209,7 @@ for row in linesBankEntries[::-1]:
 						numbers = re.findall(r"[-]?[\d]+[,.']?\d*",unidecode.unidecode(x))
 						for i in numbers:
 							total_sum += float(i.replace(',','.').replace('\'','.'))
+							total_sum = round(total_sum,2)
 			if (total_sum != float(row['Importe'].replace(',','.').replace('\'','.'))):
 				raise Exception('Total sum of quantity elements is not correctly calculated:  {}'.format(parts))
 

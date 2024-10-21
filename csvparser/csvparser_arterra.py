@@ -73,24 +73,32 @@ else:
 dictionary = dict()
 months = ["ene" , "feb" , "mar", "abr", "may", "jun" , "jul" , "ago" , "sep" , "oct" , "nov" , "dic"]
 
-# parse people
-fuegos = linesPeople[0]
-fuegos.pop(0) # remove initial name in first slot
-fuegos_lower = linesPeople[1]
-fuegos_lower.pop(0) # remove initial name in first slot
-personas = linesPeople[2]
-personas.pop(0) # remove initial name in first slot
-personas_lower = linesPeople[3]
-personas_lower.pop(0) # remove initial name in first slot
+# parse fuegos, people and projects
+fuegosPretty = linesPeople[0]
+fuegosPretty.pop(0) # remove initial name in first slot
+fuegosCalc = linesPeople[1]
+fuegosCalc.pop(0) # remove initial name in first slot
+personasPretty = linesPeople[2]
+personasPretty.pop(0) # remove initial name in first slot
+personasCalc = linesPeople[3]
+personasCalc.pop(0) # remove initial name in first slot
+proyectosPretty = linesPeople[4]
+proyectosPretty.pop(0) # remove initial name in first slot
+proyectosCalc = linesPeople[5]
+proyectosCalc.pop(0) # remove initial name in first slot
 
-for index, s in enumerate(fuegos_lower):
-	fuegos_lower[index] = unidecode.unidecode(s.casefold().replace(" ", ""))
+for index, s in enumerate(fuegosCalc):
+	fuegosCalc[index] = unidecode.unidecode(s.casefold().replace(" ", ""))
 
-for index, s in enumerate(personas_lower):
-	personas_lower[index] = unidecode.unidecode(s.casefold().replace(" ", ""))
+for index, s in enumerate(personasCalc):
+	personasCalc[index] = unidecode.unidecode(s.casefold().replace(" ", ""))
 
-#print(fuegos_lower)
-#print(personas_lower)
+for index, s in enumerate(proyectosCalc):
+	proyectosCalc[index] = unidecode.unidecode(s.casefold().replace(" ", ""))
+
+#print(fuegosCalc)
+#print(personasCalc)
+#print(proyectosCalc)
 
 # detect whether it's Fiare or Triodos
 print (Style.RESET_ALL + Fore.BLUE + "Detect bank")
@@ -107,7 +115,12 @@ else:
 
 # parse bank entries
 data = [["Fecha", "Entidad", "Caja", "Método", "Círculo/Área", "Persona", "Fuego", "Proyecto", "Concepto", "Entrada", "Salida", "Notas"]]
-for row in linesBankEntries[::-1]:
+print("linesBankEntries")
+print(len(linesBankEntries))
+for rowNumber, row in enumerate(linesBankEntries[::-1]):
+	print("row number")
+	print(rowNumber)
+	
 	if (bankType == "Triodos"):
 		date = datetime.strptime(row[fechaValor],"%d/%m/%Y").date()
 	else:
@@ -118,356 +131,243 @@ for row in linesBankEntries[::-1]:
 		elif "RCBO." in row[concepto]:
 			new_concept = row[concepto].replace("RCBO.","recibo de ")
 			row[concepto] = new_concept
-	# generate array
-	array = [date, "", "", "Banco", "", "", "", "", row[concepto], "","",""]
-	extra_array = []
+	
+	accounting_array = [date, "", "", "Banco", "", "", "", "", row[concepto], "","",""]
+	# add a new row in the accounting matrix
+	if rowNumber == 0:
+		accounting_matrix = []
+
+	accounting_matrix.append(accounting_array)
+	
+	#print("accounting matrix")
+	#print(accounting_matrix)
+	print("length accounting matrix")
+	print(len(accounting_matrix))
+	
 	# add amount either to input or output
 	#first remove throusand dot separator, then replace comma decimal by dot
 	if float(row['Importe'].replace('.','').replace(',','.')) > 0: 
-		array[9] = float(row['Importe'].replace('.','').replace(',','.'))
+		accounting_matrix[len(accounting_matrix)-1][9] = float(row['Importe'].replace('.','').replace(',','.'))
+		print(accounting_matrix[len(accounting_matrix)-1][9])
 	else:
-		array[10] = abs(float(row['Importe'].replace('.','').replace(',','.')))
+		accounting_matrix[len(accounting_matrix)-1][10] = abs(float(row['Importe'].replace('.','').replace(',','.')))
+		print(accounting_matrix[len(accounting_matrix)-1][10])
 
-	# replace "()" by "." before parsing in concept
-	if "()" in row[concepto]:
-		new_concept = row[concepto].replace("()",".")
-		row[concepto] = new_concept
+	## Case ab1 processing phase
 
-	## specific replacements before the ab1 parsing 
-	#remove S.L in Ecohabitar
-	if "ECOHABITAR VISIONES SOSTENIBLES, S.L" in row[concepto]:
-		new_concept = row[concepto].replace(", S.L","")
-		row[concepto] = new_concept
+	#print initial concepto
+	print("Initial concepto")
+	print(row[concepto])
 
-	#include dots in Genny's concept
-	# if "TRANSF DE GENNY CARRARO . AB1" in row[concepto]:
-		#new_concept = row[concepto].replace("CARRARO . AB1","CARRARO AB1")
-		#row[concepto] = new_concept
-		#print(new_concept)
-
-	#(include dots instead of spaces in AB1) and remove any dots before AB1
+	#concepto to lower case
 	row[concepto] = row[concepto].casefold()
 
+	#remove any dots before ab1 in concepto and get pre ab1 substring
 	if "ab1" in row[concepto]:
 		indx = row[concepto].index("ab1")
 		#print(indx)
-		new_concept = row[concepto][:indx].replace(".","") + row[concepto][indx:]#.replace(" ",".")
+		pre_ab1_substring = row[concepto][:indx].replace(".","")
+		new_concept = pre_ab1_substring + row[concepto][indx:]
 		#print(new_concept)
 		row[concepto] = new_concept
+		pre_ab1_substring = pre_ab1_substring.rstrip()
+	else: pre_ab1_substring = ""
+	print("pre ab1 substring")
+	print(pre_ab1_substring)
 
-	#include dots instead of spaces in AB1
-	row[concepto] = row[concepto].casefold()
-	#print(row[concepto])
+	# find fuego in pre ab1 substring
 
-	if "ab1 " in row[concepto]:
-		indx = row[concepto].index("ab1")
-		#print(indx)
-		new_concept = row[concepto][:indx] + row[concepto][indx:].replace(" ",".")
-		#print(new_concept)
-		row[concepto] = new_concept
+	nameTemp = pre_ab1_substring.replace('transf de ','').replace(" ", "").replace("ñ","n")
+	print("name temp")
+	print(nameTemp)
 	
-	# rule ab1.fuego.V:XXX.C:YYY.P:ZZZ.I:ZZZ.E:ZZZ.F:ZZZ
-	# V stands for vivienda
-	# C for comedor
-	# P for proyecto
-	# I for cuota integración
-	# E for almuerzos
-	# F for Fondo solidaridad
-	# D for Donación
-	# S for Visita Participativa vivienda
-	# B for Bote Comedor
-	# G for Grupo de Consumo
-	if "ab1" in row[concepto].casefold():
-		try:
-			parts = row[concepto].casefold().split('.')
-			#print(row[concepto].casefold())
-			#print(parts)
-			# parts have to be at least 3: 'transferencia de xxx ab1', '<fuego>', '<quantity element>' (e.g. v:200 or p:45 or c:45,76)
-			if (len(parts) < 3):
-				raise Exception('badly formatted string. Not using point separation:  {}'.format(parts))
-			# check the validity of the second element e.g. v:200 or p:45 or c:45,76
-			# if length is < 3 discard it
-			elif len(parts[2].strip()) < 3:
-				raise Exception('badly formatted string. Not enough info in first quantity element:  {}'.format(parts))
-			# if not starting with 'v', 'c', 'p', 'e', 'f', 'd', 's' or 'b' and no ':' later -> discard it 
-			elif (((parts[2].strip()[0] != "v") and (parts[2].strip()[0] != "c") and (parts[2].strip()[0] != "p") and (parts[2].strip()[0] != "i") \
-				and (parts[2].strip()[0] != "e") and (parts[2].strip()[0] != "f") and (parts[2].strip()[0] != "d") and (parts[2].strip()[0] != "s") \
-				and (parts[2].strip()[0] != "b") and (parts[2].strip()[0] != "g")) ): # or (parts[2].strip()[1] != ":")):
-					raise Exception('badly formatted string. first quantity element not well formed:  {}'.format(parts))
+	matchingGranularity = 5
+	isFuegoFound = False
+	fuegosIndex = -1
+	for index, s in enumerate(fuegosCalc):
+		for i in range(len(nameTemp) - matchingGranularity):
+			for j in range(len(s) - matchingGranularity):
+				if nameTemp[i:i+6] == s[j:j+matchingGranularity+1]:
+					isFuegoFound = True
+					fuegosIndex = index
 
-			# remove any additional element on the last part (after a space)
-			if " " in parts[len(parts)-1]:
-				rest = parts[len(parts)-1].split(" ", 1)[0]
-				parts[len(parts)-1] = rest
+	if isFuegoFound == True:
+		print("match in fuegos")
+		print(fuegosPretty[fuegosIndex])
+		accounting_matrix[len(accounting_matrix)-1][6] = fuegosPretty[fuegosIndex]
+	else:
+		accounting_matrix[len(accounting_matrix)-1][6] = ""
+
+	# find persona in pre ab1 substring
+	matchingGranularity = 5
+	isPersonaFound = False
+	personasIndex = -1
+	for index, s in enumerate(personasCalc):
+		for i in range(len(nameTemp) - matchingGranularity):
+			for j in range(len(s) - matchingGranularity):
+				if nameTemp[i:i+6] == s[j:j+matchingGranularity+1]:
+					isPersonaFound = True
+					personasIndex = index
+
+	if isPersonaFound == True:
+		print("match in personas")
+		print(personasPretty[personasIndex])
+		accounting_matrix[len(accounting_matrix)-1][5] = personasPretty[personasIndex]
+	else:
+		accounting_matrix[len(accounting_matrix)-1][5] = ""
+
+	# find proyecto in pre ab1 substring
+	matchingGranularity = 5
+	isProyectoFound = False
+	proyectosIndex = -1
+	for index, s in enumerate(proyectosCalc):
+		for i in range(len(nameTemp) - matchingGranularity):
+			for j in range(len(s) - matchingGranularity):
+				if nameTemp[i:i+6] == s[j:j+matchingGranularity+1]:
+					isProyectoFound = True
+					proyectosIndex = index
+
+	if isProyectoFound == True:
+		print("match in proyectos")
+		print(proyectosPretty[proyectosIndex])
+		accounting_matrix[len(accounting_matrix)-1][7] = proyectosPretty[proyectosIndex]
+	else:
+		accounting_matrix[len(accounting_matrix)-1][7] = ""
+
+	# extract "ab1" substring using regular expresions
+	ab1_substring_match = re.search(r"[aA][Bb]1(?:\(\))?\.?(\s*)[^0-9^.^\(\)]*((?:\(\))?\.?(\s*)[vVcCpPeEiIfFdDsSbBgG]:?(-?\d+(?:\,\d+)?))+",row[concepto])
+	#print(row[concepto])
+	if ab1_substring_match:
+		ab1_substring = ab1_substring_match.group(0)
+	else: ab1_substring = ""
+	print("ab1 substring")
+	print(ab1_substring)
+
+	#find post ab1 substring
+	index = row[concepto].find(ab1_substring)
+	if index != -1:
+		post_ab1_substring = row[concepto][index + len(ab1_substring):]
+		post_ab1_substring = post_ab1_substring.lstrip()
+	else: post_ab1_substring = ""
+	print("post ab1 substring")
+	print(post_ab1_substring)
+
+	# replace " " or "()" by "." and ":" by "" before parsing ab1 substring
+	if "()" or " " in ab1_substring:
+		ab1_substring_processed = ab1_substring.replace("()",".").replace(" ",".").replace(":","")
+		ab1_substring = ab1_substring_processed
+	ab1_substring_processed_match = re.search(r"[aA][Bb]1(?:\(\))?\.?(\s*)[^0-9^.^\(\)]*\.?",ab1_substring)
+	if ab1_substring_processed_match:
+		ab1_substring_to_remove = ab1_substring_processed_match.group(0)
+	else: ab1_substring_to_remove = ""
+	index = ab1_substring.find(ab1_substring_to_remove)
+	if index != -1:
+		ab1_substring_processed = ab1_substring[index + len(ab1_substring_to_remove):]
+		ab1_substring_processed = ab1_substring_processed.lstrip()
+	else: ab1_substring_processed = ""
+	print("ab1 substring processed")
+	print(ab1_substring_processed)
+
+	# split segments in matrix
+	parts = ab1_substring_processed.split('.')
+	#print("parts")
+	#print(parts)
+	ab1_substring_processed_matrix = []
+	if parts != ['']:
+		for x in parts:
+			print(x[1:])
+			letter = x[0]
+			number = float(x[1:].replace(",","."))
+			ab1_substring_processed_matrix.append((letter, number))
+	print("ab1 substring processed matrix")
+	print(ab1_substring_processed_matrix)
+
+	# Loop through ab1 substring processed matrix and create necessary accounting entries
+	total_sum = 0
+	if ab1_substring_processed_matrix != []:
+		# check if sum of quantity elements is correct and throw and exception if not
+		for x in ab1_substring_processed_matrix:
+			total_sum += x[1]
+		print("total sum")
+		print(total_sum)
+		print("importe")
+		print(float(row['Importe'].replace(',','.').replace('\'','.')))
+		if (total_sum != float(row['Importe'].replace(',','.').replace('\'','.'))):
+				raise Exception('Total sum of quantity elements is not correctly calculated:  {}'.format(row[concepto]))
+
+		# TODO: loop through each matrix pair and create accounting entries for each case 
+		# rule ab1.fuego.V:XXX.C:YYY.P:ZZZ.I:ZZZ.E:ZZZ.F:ZZZ.D:ZZZ.S:ZZZ.B:ZZZ.G:ZZZ
+		# V stands for vivienda
+		# C for comedor
+		# P for proyecto
+		# I for cuota integración
+		# E for almuerzos
+		# F for Fondo solidaridad
+		# D for Donación
+		# S for Visita Participativa vivienda
+		# B for Bote Comedor
+		# G for Grupo de Consumo
+		print("loop through ab1 substring processed matrix elements")
+		initialIndex = len(accounting_matrix)-1
+		index = initialIndex
+		for letter, value in ab1_substring_processed_matrix:
+			print(letter)
+			print(value)
+			#print(accounting_matrix[index])
+			print(initialIndex)
+			print(index)
+			if index > initialIndex:
+				print("accounting_matrix initial index")
+				print(initialIndex)
+				print(accounting_matrix[initialIndex])
+				new_accounting_element = accounting_matrix[len(accounting_matrix)-1].copy()  # Create a copy of the last element
+				accounting_matrix.append(new_accounting_element)
+				print("accounting_matrix current index")
+				print(len(accounting_matrix)-1)
+				print(accounting_matrix[len(accounting_matrix)-1])
 			
-			# check if sum of quantity elements is correct
-			total_sum = 0
-			for x in parts[2::]:
-				if ((((x.strip())[0] == "v") or ((x.strip())[0] == "c") or ((x.strip())[0] == "p") or ((x.strip())[0] == "i") \
-					or ((x.strip())[0] == "e") or ((x.strip())[0] == "f") or ((x.strip())[0] == "d") or ((x.strip())[0] == "s") \
-					or ((x.strip())[0] == "b") or ((x.strip())[0] == "g")) or any((x.strip())[1:4] in r for r in months)): # and (((x.strip())[1] == ":")
-						numbers = re.findall(r"[-]?[\d]+[,.']?\d*",unidecode.unidecode(x))
-						for i in numbers:
-							total_sum += float(i.replace(',','.').replace('\'','.'))
-							total_sum = round(total_sum,2)
-			if (total_sum != float(row['Importe'].replace(',','.').replace('\'','.'))):
-				raise Exception('Total sum of quantity elements is not correctly calculated:  {}'.format(parts))
-
-			# find fuego in list
-			#print(parts[0])
-			d = " "
-			nameTemp = parts[0].replace('transf de ','').replace(' ab1','')
-			#print(nameTemp)
-			#name = d.join(nameTemp.split(d, 2)[:2]).replace(" ", "") #Returns nameTemp truncated at the 2nd occurrence of the delimiter d, without spaces
-			name = nameTemp.replace(" ", "").replace("ñ","n") #this option works better if fuegos_lower and personas_lower has all surnames
-			#print(name)
-			if any(name in s for s in fuegos_lower):
-				#print("match in fuegos")
-				matching = [s for s in fuegos_lower if name in s]
-				#print(matching)
-				indexFuegos = fuegos_lower.index(matching[0])
-				array[6] = fuegos[indexFuegos]
+			if letter == "v" : #vivienda
+				accounting_matrix[index][2] = "Gasto"
+				accounting_matrix[index][4] = "Cuotas vivienda"
+			elif letter == "c" : #comedor
+				accounting_matrix[index][2] = "Comedor"
+				accounting_matrix[index][4] = "Cuotas comedor"
+			elif letter == "p" : #proyectos
+				accounting_matrix[index][2] = "Gasto"
+				accounting_matrix[index][4] = "Cuotas proyectos"
+			elif letter == "i": #cuota integración
+				accounting_matrix[index][2] = "Inversión"
+				accounting_matrix[index][4] = "Inversión entrada a integración"
+			elif letter == "e" : #almuerzos
+				accounting_matrix[index][2] = "Comedor"
+				accounting_matrix[index][4] = "Almuerzos"
+			elif letter == "f": #Fondo solidaridad 
+				accounting_matrix[index][2] = "Inversión"
+				accounting_matrix[index][4] = "Fondo Solidaridad Arterrana"
+			elif letter == "d": #donación
+				accounting_matrix[index][2] = "Inversión"
+				accounting_matrix[index][4] = "Donación"
+			elif letter == "s": #Visita Participativa vivienda
+				accounting_matrix[index][2] = "Gasto"
+				accounting_matrix[index][4] = "Cuotas visitas participativas"
+			elif letter == "b": #Bote Comedor
+				accounting_matrix[index][2] = "Comedor"
+				accounting_matrix[index][4] = "Botes"
+			elif letter == "g": #Grupo de Consumo
+				accounting_matrix[index][2] = "Comedor"
+				accounting_matrix[index][4] = "Grupo de Consumo"
+			
+			#add the value to the corresponding column
+			if value > 0:
+				accounting_matrix[index][9] = value
 			else:
-				array[6] = ""
-				indexFuegos = -1
-			
-			# find person in list
-			if any(name in s for s in personas_lower):
-				#print("match in personas")
-				matching = [s for s in personas_lower if name in s]
-				#print(matching)
-				indexPersonas = personas_lower.index(matching[0])
-				array[5] = personas[indexPersonas]
-				
-			else:
-				array[5] = ""
-				indexPersonas = -1
-			# allocate first quantity element {parts[2]}
-			
-			## vivienda
-			if (parts[2].strip())[0] == "v" :
-				array[2] = "Gasto"
-				array[4] = "Cuotas vivienda"
-			
-			## proyecto
-			elif (parts[2].strip())[0] == "p":
-				array[2] = "Gasto"
-				array[4] = "Cuotas proyectos"
-				if "global ecovillage network of europe" in row[concepto].casefold() or "GLOBAL ECOV.NETW.EUROPE".casefold() in row[concepto].casefold():
-					array[7] = "GEN"
-				elif "ecohabitar" in row[concepto].casefold():
-					array[7] = "Ecohabitar"
-				elif "ana lucia" in row[concepto].casefold() or "maria eugenia" in row[concepto].casefold():
-					array[7] = "Oficina Oeste"
-				elif "biararte" in row[concepto].casefold() or "biar arte" in row[concepto].casefold():
-					array[7] = "Biar Arte"
-				elif "fanny" in row[concepto].casefold() or "ceramica" in row[concepto].casefold():
-					array[7] = "Taller cerámica"
-				elif "genny" in row[concepto].casefold():
-					array[7] = "Oficina Genny"
-			
-			## comedor
-			elif (parts[2].strip())[0] == "c":
-				array[2] = "Comedor"
-				array[4] = "Cuotas comedor"
-
-			## almuerzos
-			elif (parts[2].strip())[0] == "e":
-				array[2] = "Comedor"
-				array[4] = "Almuerzos"
-			
-			## cuota integración
-			elif (parts[2].strip())[0] == "i":
-				array[2] = "Inversión"
-				array[4] = "Inversión entrada a integración"
-
-			## fondo solidaridad
-			elif (parts[2].strip())[0] == "f":
-				array[2] = "Inversión"
-				array[4] = "Fondo Solidaridad Arterrana"
-
-			## donación
-			elif (parts[2].strip())[0] == "d":
-				array[2] = "Inversión"
-				array[4] = "Donación"
-
-			## Visita Participativa vivienda
-			elif (parts[2].strip())[0] == "s":
-				array[2] = "Gasto"
-				array[4] = "Cuotas visitas participativas"
-
-			## Bote Comedor
-			elif (parts[2].strip())[0] == "b":
-				array[2] = "Comedor"
-				array[4] = "Botes"
-			
-			## Grupo de Consumo
-			elif (parts[2].strip())[0] == "g":
-				array[2] = "Comedor"
-				array[4] = "Grupo de Consumo"
-
-			else:
-				raise Exception('badly formatted string. First letter of first quantity element wrong:  {}'.format(parts))
-			
-			# read number in first quantity element
-			numbers = re.findall(r"[-]?[\d]+[\.,']?\d*",(unidecode.unidecode(parts[2].strip())[1:len(parts[2].strip())]))
-			if numbers:
-				if float(numbers[0].replace(',','.').replace('\'','.')) > 0:
-					array[9] = float(numbers[0].replace(',','.').replace('\'','.'))
-				else: 
-					array[10] = abs(float(numbers[0].replace(',','.').replace('\'','.')))
-			else:
-				raise Exception('badly formatted string:  {}'.format(parts))
-			
-			"""
-			if (parts[2].strip())[1] == ":":
-				numbers = re.findall(r"[-]?[\d]+[\.,']?\d*",(parts[2].strip())[2:len(parts[2].strip())])
-				#print(numbers)
-				if float(numbers[0].replace(',','.').replace('\'','.')) > 0:
-					array[9] = float(numbers[0].replace(',','.').replace('\'','.'))
-				else: 
-					array[10] = abs(float(numbers[0].replace(',','.').replace('\'','.')))
-			elif any((parts[2].strip())[1:4] in r for r in months):
-				numbers = re.findall(r"[-]?[\d]+[\.,'']?\d*",(parts[2].strip())[4:len(parts[2].strip())])
-				#print(numbers)
-				if float(numbers[0].replace(',','.').replace('\'','.')) > 0:
-					array[9] = float(numbers[0].replace(',','.').replace('\'','.'))
-				else: 
-					array[10] = abs(float(numbers[0].replace(',','.').replace('\'','.')))
-			else: 
-				raise Exception('badly formatted string:  {}'.format(parts))
-			"""
-			
-			# allocate other quantity elements beyond parts[2]. Need to create another row for each
-			# rule ab1.fuego.V:XXX.C:YYY.P:ZZZ.I:ZZZ.E:ZZZ.F:ZZZ
-			# V stands for vivienda
-			# C for comedor
-			# P for proyecto
-			# I for cuota integración
-			# E for almuerzos
-			# F for Fondo solidaridad
-			# D for Donación
-			# S for Visita Participativa vivienda
-			# B for Bote Comedor
-			# G for Grupo de Consumo
-			if len(parts) > 3:
-				for q, x in enumerate(parts[3::], start=0):
-					# check if parts[3] and more contains valid formatted data, if not cancel parsing
-					# if not starting with 'v', 'c' or 'p' and no ':' later -> discard it 
-					if (((x.strip()[0] != "v") and (x.strip()[0] != "c") and (x.strip()[0] != "p") and (x.strip()[0] != "e") and (x.strip()[0] != "i") \
-						and (x.strip()[0] != "f") and (x.strip()[0] != "d") and (x.strip()[0] != "s") and (x.strip()[0] != "b") and (x.strip()[0] != "g"))): # or (x.strip()[1] != ":")):
-							print(Style.RESET_ALL + Fore.RED + '***Warning***: badly formatted string. Quantity element number {} not well formed:  {}'.format(q+3,parts))
-							continue
-					extra_array.append(array.copy())
-					extra_array[q][9] = ""
-					extra_array[q][10] = ""
-					
-					## vivienda
-					if x.strip()[0] == "v":
-						extra_array[q][2] = "Gasto"
-						extra_array[q][4] = "Cuotas vivienda"
-						extra_array[q][5] = ""
-						if indexFuegos != -1:
-							extra_array[q][6] = fuegos[indexFuegos]
-					## proyecto
-					elif x.strip()[0] == "p":
-						extra_array[q][2] = "Gasto"
-						extra_array[q][4] = "Cuotas proyectos"
-						if "global ecovillage network of europe" in row[concepto].casefold() or "GLOBAL ECOV.NETW.EUROPE".casefold() in row[concepto].casefold():
-							extra_array[q][7] = "GEN"
-						elif "ecohabitar" in row[concepto].casefold():
-							extra_array[q][7] = "Ecohabitar"
-						elif "ana lucia" in row[concepto].casefold() or "maria eugenia" in row[concepto].casefold():
-							extra_array[q][7] = "Oficina Oeste"
-						elif "biararte" in row[concepto].casefold() or "biar arte" in row[concepto].casefold():
-							extra_array[q][7] = "Biar Arte"
-						elif "fanny" in row[concepto].casefold() or "ceramica" in row[concepto].casefold():
-							extra_array[q][7] = "Taller cerámica"
-						elif "genny" in row[concepto].casefold():
-							extra_array[q][7] = "Oficina Genny"
-						elif "nahia" in row[concepto].casefold():
-							extra_array[q][7] = "CW Nahia"
-							
-					## comedor
-					elif x.strip()[0] == "c":
-						extra_array[q][2] = "Comedor"
-						extra_array[q][4] = "Cuotas comedor"
-
-					## almuerzos
-					elif x.strip()[0] == "e":
-						extra_array[q][2] = "Comedor"
-						extra_array[q][4] = "Almuerzos"
-					
-					## cuota integración
-					elif x.strip()[0] == "i":
-						extra_array[q][2] = "Inversión"
-						extra_array[q][4] = "Inversión entrada a integración"
-
-					## fondo solidaridad
-					elif x.strip()[0] == "f":
-						extra_array[q][2] = "Inversión"
-						extra_array[q][4] = "Fondo Solidaridad Arterrana"
-
-					## donación
-					elif x.strip()[0] == "d":
-						extra_array[q][2] = "Inversión"
-						extra_array[q][4] = "Donación"
-
-					## Visita Participativa vivienda
-					elif x.strip()[0] == "s":
-						extra_array[q][2] = "Gasto"
-						extra_array[q][4] = "Cuotas visitas participativas"
-
-					## Bote Comedor
-					elif x.strip()[0] == "b":
-						extra_array[q][2] = "Comedor"
-						extra_array[q][4] = "Botes"
-					
-					## Grupo de Consumo
-					elif x.strip()[0] == "g":
-						extra_array[q][2] = "Comedor"
-						extra_array[q][4] = "Grupo de Consumo"
-					
-					else:
-						print(Style.RESET_ALL + Fore.RED + 'WARNING: badly formatted string. Skipping quantity element:  {}'.format(x))
-						extra_array.remove(extra_array[q])
-						continue
-					
-					# read number in other quantity element
-					numbers = re.findall(r"[-]?[\d]+[\.,']?\d*",(unidecode.unidecode(x.strip())[1:len(x.strip())]))
-					if numbers:
-						if float(numbers[0].replace(',','.').replace('\'','.')) > 0:
-							extra_array[q][9] = float(numbers[0].replace(',','.').replace('\'','.'))
-						else: 
-							extra_array[q][10] = abs(float(numbers[0].replace(',','.').replace('\'','.')))
-					else:
-						raise Exception('badly formatted string:  {}'.format(parts))
-
-					"""
-					if (x.strip())[1] == ":":
-						numbers = re.findall(r"[-]?[\d]+[\.,]?\d*",(x.strip())[2:len(x.strip())])
-						#print(numbers)
-						if float(numbers[0].replace(',','.')) > 0:
-							extra_array[q][9] = float(numbers[0].replace(',','.'))
-						else: 
-							extra_array[q][10] = abs(float(numbers[0].replace(',','.')))
-					elif any((x.strip())[1:4] in r for r in months):
-						numbers = re.findall(r"[-]?[\d]+[\.,]?\d*",(x.strip())[4:len(x.strip())])
-						#print(numbers)
-						if float(numbers[0].replace(',','.')) > 0:
-							extra_array[q][9] = float(numbers[0].replace(',','.'))
-						else: 
-							extra_array[q][10] = abs(float(numbers[0].replace(',','.')))
-					else: 
-						print('WARNING: badly formatted string. Skipping quantity element:  {}'.format(x))
-						continue
-					"""
-
-		except Exception as exception:
-			print(Style.RESET_ALL + Fore.RED + "***********************")
-			logging.error(exception)
-			print(Style.RESET_ALL + Fore.RED + "***********************")
-
+				accounting_matrix[index][10] = value
+			print("index and row")
+			print(index)
+			print(accounting_matrix[index])
+			index += 1
+	print("accounting matrix after ab1 loop")
+	print(accounting_matrix)
 
 	# rule Encuentro Arterra XXXX
 	# create three entries and split the money between:
@@ -476,61 +376,38 @@ for row in linesBankEntries[::-1]:
 	# gasto: 20%
 	# Baratzan Blai 10%
 
-	# todo introducir nombre de encuentro en K de desglose, partir cantidad equitativamente
-
 	if "encuentro arterra" in row[concepto].casefold():
 		try:
-			# print(row[concepto].casefold()[row[concepto].casefold().index("encuentro arterra")+len("encuentro arterra "):])
-			array[2] = "Inversión"
-			array[4] = "Gestión y planificación de encuentros"
-			array[11] = row[concepto].casefold()[row[concepto].casefold().index("encuentro arterra")+len("encuentro arterra "):]
-			# add amount either to input or output
-			if float(row['Importe'].replace(',','.')) > 0:
-				array[9] = float(row['Importe'].replace(',','.'))*0.50
-			else:
-				array[10] = abs(float(row['Importe'].replace(',','.')))*0.50
-
-			# create other three rows
-			extra_array.append(array.copy())
-			extra_array[0][2] = "Gasto"
-			extra_array[0][4] = "Gestión y planificación de encuentros"
-			extra_array[0][11] = row[concepto].casefold()[row[concepto].casefold().index("encuentro arterra")+len("encuentro arterra "):]
-			# add amount either to input or output
-			if float(row['Importe'].replace(',','.')) > 0:
-				extra_array[0][9] = float(row['Importe'].replace(',','.'))*0.20
-			else:
-				extra_array[0][10] = abs(float(row['Importe'].replace(',','.')))*0.20
-
-			extra_array.append(array.copy())
-			extra_array[1][2] = "Comedor"
-			extra_array[1][4] = "Gestión y planificación de encuentros"
-			extra_array[1][11] = row[concepto].casefold()[row[concepto].casefold().index("encuentro arterra")+len("encuentro arterra "):]
-			# add amount either to input or output
-			if float(row['Importe'].replace(',','.')) > 0:
-				extra_array[1][9] = float(row['Importe'].replace(',','.'))*0.20
-			else:
-				extra_array[1][10] = abs(float(row['Importe'].replace(',','.')))*0.20
-
-			extra_array.append(array.copy())
-			extra_array[2][2] = "Gasto"
-			extra_array[2][4] = "Cuotas proyectos"
-			extra_array[2][7] = "Baratzan Blai"
-			extra_array[2][11] = row[concepto].casefold()[row[concepto].casefold().index("encuentro arterra")+len("encuentro arterra "):]
-			# add amount either to input or output
-			if float(row['Importe'].replace(',','.')) > 0:
-				extra_array[2][9] = float(row['Importe'].replace(',','.'))*0.10
-			else:
-				extra_array[2][10] = abs(float(row['Importe'].replace(',','.')))*0.10
+			print("Caso Encuentro")
+			rowsNumberEncuentros = 4		
+			encuentroPercentages = [0.50,0.20,0.20,0.10]
+			encuentroCajas = ['Inversión','Gasto','Gasto','Gasto']
+			for index in range(rowsNumberEncuentros):
+				print(index)
+				if index > 0:
+					new_accounting_element = accounting_matrix[len(accounting_matrix)-1].copy()  # Create a copy of the last element
+					accounting_matrix.append(new_accounting_element)
+				# print(row[concepto].casefold()[row[concepto].casefold().index("encuentro arterra")+len("encuentro arterra "):])
+				accounting_matrix[len(accounting_matrix)-1][2] = encuentroCajas[index]
+				accounting_matrix[len(accounting_matrix)-1][4] = "Gestión y planificación de encuentros"
+				if index == 3: accounting_matrix[len(accounting_matrix)-1][7] = "Baratzan Blai"
+				accounting_matrix[len(accounting_matrix)-1][11] = row[concepto].casefold()[row[concepto].casefold().index("encuentro arterra")+len("encuentro arterra "):]
+				# add amount either to input or output
+				if float(row['Importe'].replace(',','.')) > 0:
+					accounting_matrix[len(accounting_matrix)-1][9] = float(row['Importe'].replace(',','.'))*encuentroPercentages[index]
+				else:
+					accounting_matrix[len(accounting_matrix)-1][10] = abs(float(row['Importe'].replace(',','.')))*encuentroPercentages[index]
 
 		except Exception as exception:
 			print(Style.RESET_ALL + Fore.RED + "***********************")
 			logging.error(exception)
 			print(Style.RESET_ALL + Fore.RED + "***********************")
 
+	## Additional rules. TODO: to remove them and integrate them into config files if needed
 	# rule fanny (Enero C/ Abajo 1,1o) and word alquiler or renta
 	if "abajo 1, 1o".casefold() in row[concepto].casefold() or "abajo 1,1o".casefold() in row[concepto].casefold() or "renta" in row[concepto].casefold() or "mensualidad" in row[concepto].casefold():
-		array[2] = "Gasto"
-		array[4] = "Cuotas vivienda"
+		accounting_matrix[len(accounting_matrix)-1][2] = "Gasto"
+		accounting_matrix[len(accounting_matrix)-1][4] = "Cuotas vivienda"
 		# find fuego in list
 		parts = row[concepto].casefold().split('.')
 		name = parts[0].replace('transf de ','').replace(' ab1','').replace(" ", "").replace("c/abajo1,1o", "") \
@@ -538,13 +415,13 @@ for row in linesBankEntries[::-1]:
 		.replace("junio", "").replace("julio", "").replace("agosto", "").replace("septiembre", "") \
 		.replace("octubre", "").replace("noviembre", "").replace("diciembre", "")
 		#print(name)
-		if any(name in s for s in fuegos_lower):
-			matching = [s for s in fuegos_lower if name in s]
-			array[6] = fuegos[fuegos_lower.index(matching[0])]
+		if any(name in s for s in fuegosCalc):
+			matching = [s for s in fuegosCalc if name in s]
+			accounting_matrix[len(accounting_matrix)-1][6] = fuegosPretty[fuegosCalc.index(matching[0])]
 	# rule caldera
 	if "huesillo" in row[concepto].casefold() and float(row['Importe'].replace(',','.')) < 0:
-		array[2] = "Gasto"
-		array[4] = "Huesillo"
+		accounting_matrix[len(accounting_matrix)-1][2] = "Gasto"
+		accounting_matrix[len(accounting_matrix)-1][4] = "Huesillo"
 	# rule banco
 	if ("COMISION EMISION TRANSF".casefold() in row[concepto].casefold() \
 	or "LIQUIDACION AHORRO".casefold() in row[concepto].casefold() \
@@ -553,28 +430,28 @@ for row in linesBankEntries[::-1]:
 	or "COMISION TARJETA".casefold() in row[concepto].casefold() \
 	or "COMIS. INGRESO GIRO POSTAL CORREOS".casefold() in row[concepto].casefold()) :
 	# and float(row['Importe'].replace(',','.')) <= 0:
-		array[2] = "Gasto"
-		array[4] = "Banco"
+		accounting_matrix[len(accounting_matrix)-1][2] = "Gasto"
+		accounting_matrix[len(accounting_matrix)-1][4] = "Banco"
 	# rule agua
 	if "tasa de agua" in row[concepto].casefold() and float(row['Importe'].replace(',','.')) < 0:
-		array[2] = "Gasto"
-		array[4] = "Agua"
+		accounting_matrix[len(accounting_matrix)-1][2] = "Gasto"
+		accounting_matrix[len(accounting_matrix)-1][4] = "Agua"
 	# rule telefonia
 	if ("telefonica de espana" in row[concepto].casefold() or "sisnet" in row[concepto].casefold()) and float(row['Importe'].replace(',','.')) < 0:
-		array[2] = "Gasto"
-		array[4] = "Internet y teléfono"
+		accounting_matrix[len(accounting_matrix)-1][2] = "Gasto"
+		accounting_matrix[len(accounting_matrix)-1][4] = "Internet y teléfono"
 	# rule web
 	if "strato" in row[concepto].casefold() and float(row['Importe'].replace(',','.')) < 0:
-		array[2] = "Gasto"
-		array[4] = "Web"
+		accounting_matrix[len(accounting_matrix)-1][2] = "Gasto"
+		accounting_matrix[len(accounting_matrix)-1][4] = "Web"
 	# rule garbileku
 	if "garbileku" in row[concepto].casefold() and float(row['Importe'].replace(',','.')) < 0:
-		array[2] = "Gasto"
-		array[4] = "Aterpe"
+		accounting_matrix[len(accounting_matrix)-1][2] = "Gasto"
+		accounting_matrix[len(accounting_matrix)-1][4] = "Aterpe"
 	# rule agroleku
 	if "agroleku" in row[concepto].casefold() and float(row['Importe'].replace(',','.')) < 0:
-		array[2] = "Gasto"
-		array[4] = "Animales"
+		accounting_matrix[len(accounting_matrix)-1][2] = "Gasto"
+		accounting_matrix[len(accounting_matrix)-1][4] = "Animales"
 	# rule pedidos comedor
 	if ("gumiel y mendia" in row[concepto].casefold() \
 	 or "ecomatarranya" in row[concepto].casefold() \
@@ -587,133 +464,103 @@ for row in linesBankEntries[::-1]:
 	 or "azokoop" in row[concepto].casefold() \
 	 or "citricos" in row[concepto].casefold()) \
 		and float(row['Importe'].replace(',','.')) < 0:
-		array[2] = "Comedor"
-		array[4] = "Pedidos"
+		accounting_matrix[len(accounting_matrix)-1][2] = "Comedor"
+		accounting_matrix[len(accounting_matrix)-1][4] = "Pedidos"
 	# rule electricidad
 	if "som energia" in row[concepto].casefold() and float(row['Importe'].replace(',','.')) < 0:
-		array[2] = "Gasto"
-		array[4] = "Electricidad término fijo"
-		array[11] = "=(136,39+35,81+49,04+6,14)*1,21  pot contr + reactiva + impuesto + alquiler"
+		accounting_matrix[len(accounting_matrix)-1][2] = "Gasto"
+		accounting_matrix[len(accounting_matrix)-1][4] = "Electricidad término fijo"
+		accounting_matrix[len(accounting_matrix)-1][11] = "=(136,39+35,81+49,04+6,14)*1,21  pot contr + reactiva + impuesto + alquiler"
 		# create additional line for variable term
-		extra_array.append(array.copy())
-		extra_array[0][4] = "Electricidad término variable"
-		extra_array[0][11] = "=1227,32-J726"
+		new_accounting_element = accounting_matrix[len(accounting_matrix)-1].copy()  # Create a copy of the last element
+		accounting_matrix.append(new_accounting_element)
+		accounting_matrix[len(accounting_matrix)-1][4] = "Electricidad término variable"
+		accounting_matrix[len(accounting_matrix)-1][11] = "=1227,32-J726"
 	# rule pagos cuotas comedor
 	if "comedor" in row[concepto].casefold() and not array[4]:
-		array[2] = "Comedor"
-		array[4] = "Cuotas comedor"
+		accounting_matrix[len(accounting_matrix)-1][2] = "Comedor"
+		accounting_matrix[len(accounting_matrix)-1][4] = "Cuotas comedor"
 	# rule pagos alquiler arterra
 	if "pedro enrique ramirez aragon" in row[concepto].casefold() or "geserlocal" in row[concepto].casefold():
-		array[2] = "Gasto"
-		array[4] = "Alquiler Arterra"
+		accounting_matrix[len(accounting_matrix)-1][2] = "Gasto"
+		accounting_matrix[len(accounting_matrix)-1][4] = "Alquiler Arterra"
 	# rule residuos Irati
 	if "recibo mancomunidad r.s.u. irati" in row[concepto].casefold():
-		array[2] = "Gasto"
-		array[4] = "Residuos mancomunidad"
-	# rule Contenedor
-	# TODO: implement as part of ab1
-	if "david.p" in row[concepto].casefold():
-		array[2] = "Gasto"
-		array[4] = "Cuotas proyectos"
-		array[7] = "Contenedor de Ruido"
-	# rule proyectos
-	if "global ecovillage network of europe" in row[concepto].casefold() or "GLOBAL ECOV.NETW.EUROPE".casefold() in row[concepto].casefold():
-		array[7] = "GEN"
-		array[2] = "Gasto"
-		array[4] = "Cuotas proyectos"
-	elif "ecohabitar" in row[concepto].casefold():
-		array[2] = "Gasto"
-		array[4] = "Cuotas proyectos"
-		array[5] = "Miracles"
-		array[6] = "Miracles y Toni"
-		array[7] = "Ecohabitar"
-	elif "ana lucia" in row[concepto].casefold() and array[4] == "Cuotas proyectos":
-		array[2] = "Gasto"
-		array[4] = "Cuotas proyectos"
-		array[7] = "Oficina Oeste"
-	elif "MARIA EUGENIA CANADA ZORRILLA".casefold() in row[concepto].casefold() and array[4] == "Cuotas proyectos":
-		array[2] = "Gasto"
-		array[4] = "Cuotas proyectos"
-		array[7] = "Oficina Oeste"
-	elif "biararte" in row[concepto].casefold() or "biar arte" in row[concepto].casefold():
-		array[2] = "Gasto"
-		array[4] = "Cuotas proyectos"
-		array[7] = "Biar Arte"
-	elif "baratzan" in row[concepto].casefold():
-		array[2] = "Gasto"
-		array[4] = "Cuotas proyectos"
-		array[7] = "Baratzan Blai"
+		accounting_matrix[len(accounting_matrix)-1][2] = "Gasto"
+		accounting_matrix[len(accounting_matrix)-1][4] = "Residuos mancomunidad"
 	# rule butano
-	if ("butano" in row[concepto].casefold() or "tafagas" in row[concepto].casefold()) and array[5]=="" and array[6]=="" and array[7]=="":
-		array[2] = "Gasto"
-		array[4] = "Butano"
+	if ("butano" in row[concepto].casefold() or "tafagas" in row[concepto].casefold()) and accounting_matrix[len(accounting_matrix)-1][5]=="" and accounting_matrix[len(accounting_matrix)-1][6]=="" and accounting_matrix[len(accounting_matrix)-1][7]=="":
+		accounting_matrix[len(accounting_matrix)-1][2] = "Gasto"
+		accounting_matrix[len(accounting_matrix)-1][4] = "Butano"
 	# rule Iñigo
 	if "inigo" in row[concepto].casefold():
-		array[5] = "Iñigo"
-		array[6] = "Iñigo"
+		accounting_matrix[len(accounting_matrix)-1][5] = "Iñigo"
+		accounting_matrix[len(accounting_matrix)-1][6] = "Iñigo"
 	# rule Pepe Ecohabitar
 	if "jose ignacio rojas rojas" in row[concepto].casefold():
-		array[2] = "Comedor"
-		array[4] = "Cuotas comedor"
-		array[5] = "Pepe Ecohabitar"
+		accounting_matrix[len(accounting_matrix)-1][2] = "Comedor"
+		accounting_matrix[len(accounting_matrix)-1][4] = "Cuotas comedor"
+		accounting_matrix[len(accounting_matrix)-1][5] = "Pepe Ecohabitar"
 	# rule seguro + impuesto circulación camión
-	if "helvetia compania suiza" in row[concepto].casefold() and array[5]=="" and array[6]=="" and array[7]=="":
-		array[2] = "Gasto"
-		array[4] = "Camión"
-
+	if "helvetia compania suiza" in row[concepto].casefold() and accounting_matrix[len(accounting_matrix)-1][5]=="" and accounting_matrix[len(accounting_matrix)-1][6]=="" and accounting_matrix[len(accounting_matrix)-1][7]=="":
+		accounting_matrix[len(accounting_matrix)-1][2] = "Gasto"
+		accounting_matrix[len(accounting_matrix)-1][4] = "Camión"
 	# rule seguro + impuesto circulación camión
-	if "ayuntamiento del valle de eges" in row[concepto].casefold() and array[5]=="" and array[6]=="" and array[7]=="":
-		array[2] = "Gasto"
-		array[4] = "Camión"
+	if "ayuntamiento del valle de eges" in row[concepto].casefold() and accounting_matrix[len(accounting_matrix)-1][5]=="" and accounting_matrix[len(accounting_matrix)-1][6]=="" and accounting_matrix[len(accounting_matrix)-1][7]=="":
+		accounting_matrix[len(accounting_matrix)-1][2] = "Gasto"
+		accounting_matrix[len(accounting_matrix)-1][4] = "Camión"
 	# rule Responsabilidad Civil
-	if ("mic responsabilidad civil" in row[concepto].casefold() or "om suscripcion" in row[concepto].casefold()) and array[5]=="" and array[6]=="" and array[7]=="":
-		array[2] = "Gasto"
-		array[4] = "Seguro Responsabilidad Civil"
+	if ("mic responsabilidad civil" in row[concepto].casefold() or "om suscripcion" in row[concepto].casefold()) and accounting_matrix[len(accounting_matrix)-1][5]=="" and accounting_matrix[len(accounting_matrix)-1][6]=="" and accounting_matrix[len(accounting_matrix)-1][7]=="":
+		accounting_matrix[len(accounting_matrix)-1][2] = "Gasto"
+		accounting_matrix[len(accounting_matrix)-1][4] = "Seguro Responsabilidad Civil"
 	
 	# rule reas
-	if "REAS NAVARRA CUOTA ANUAL REAS".casefold() in row[concepto].casefold() and array[5]=="" and array[6]=="" and array[7]=="":
-		array[2] = "Gasto"
-		array[4] = "Cuotas redes varias"
+	if "REAS NAVARRA CUOTA ANUAL REAS".casefold() in row[concepto].casefold() and accounting_matrix[len(accounting_matrix)-1][5]=="" and accounting_matrix[len(accounting_matrix)-1][6]=="" and accounting_matrix[len(accounting_matrix)-1][7]=="":
+		accounting_matrix[len(accounting_matrix)-1][2] = "Gasto"
+		accounting_matrix[len(accounting_matrix)-1][4] = "Cuotas redes varias"
 
 	# rule el salto
-	if "cuota el salto".casefold() in row[concepto].casefold() and array[5]=="" and array[6]=="" and array[7]=="":
-		array[2] = "Gasto"
-		array[4] = "Cuotas redes varias"
+	if "cuota el salto".casefold() in row[concepto].casefold() and accounting_matrix[len(accounting_matrix)-1][5]=="" and accounting_matrix[len(accounting_matrix)-1][6]=="" and accounting_matrix[len(accounting_matrix)-1][7]=="":
+		accounting_matrix[len(accounting_matrix)-1][2] = "Gasto"
+		accounting_matrix[len(accounting_matrix)-1][4] = "Cuotas redes varias"
 	
 	# rule cooperativa cerealista
-	if "cerealista".casefold() in row[concepto].casefold() and array[5]=="" and array[6]=="" and array[7]=="":
-		array[2] = "Gasto"
-		array[4] = "Animales"
+	if "cerealista".casefold() in row[concepto].casefold() and accounting_matrix[len(accounting_matrix)-1][5]=="" and accounting_matrix[len(accounting_matrix)-1][6]=="" and accounting_matrix[len(accounting_matrix)-1][7]=="":
+		accounting_matrix[len(accounting_matrix)-1][2] = "Gasto"
+		accounting_matrix[len(accounting_matrix)-1][4] = "Animales"
 
 	# rule hipoteca fiare
-	if ("PReSTAMO0018633156" in row[concepto].casefold() or "PRÉSTAMO0018633156" in row[concepto].casefold()) and array[5]=="" and array[6]=="" and array[7]=="":
-		array[2] = "Gasto"
-		array[4] = "Devolución hipoteca"
+	if ("PReSTAMO0018633156" in row[concepto].casefold() or "PRÉSTAMO0018633156" in row[concepto].casefold()) and accounting_matrix[len(accounting_matrix)-1][5]=="" and accounting_matrix[len(accounting_matrix)-1][6]=="" and accounting_matrix[len(accounting_matrix)-1][7]=="":
+		accounting_matrix[len(accounting_matrix)-1][2] = "Gasto"
+		accounting_matrix[len(accounting_matrix)-1][4] = "Devolución hipoteca"
 
 	# rule devolucion prestamo carlos
-	if "DEVOLUCION PRESTAMO CARLOS".casefold() in row[concepto].casefold() and array[5]=="" and array[6]=="" and array[7]=="":
-		array[2] = "Inversión"
-		array[4] = "Prestamos"
+	if "DEVOLUCION PRESTAMO CARLOS".casefold() in row[concepto].casefold() and accounting_matrix[len(accounting_matrix)-1][5]=="" and accounting_matrix[len(accounting_matrix)-1][6]=="" and accounting_matrix[len(accounting_matrix)-1][7]=="":
+		accounting_matrix[len(accounting_matrix)-1][2] = "Inversión"
+		accounting_matrix[len(accounting_matrix)-1][4] = "Prestamos"
 
 	# rule devolucion hipoteca
-	if "PReSTAMO0018633156".casefold() in row[concepto].casefold() and array[5]=="" and array[6]=="" and array[7]=="":
-		array[2] = "Inversión"
-		array[4] = "Prestamos"
+	if "PReSTAMO0018633156".casefold() in row[concepto].casefold() and accounting_matrix[len(accounting_matrix)-1][5]=="" and accounting_matrix[len(accounting_matrix)-1][6]=="" and accounting_matrix[len(accounting_matrix)-1][7]=="":
+		accounting_matrix[len(accounting_matrix)-1][2] = "Inversión"
+		accounting_matrix[len(accounting_matrix)-1][4] = "Prestamos"
 	
 	# rule ESC pocket money, sending org and travel refund
 	if "pocket money".casefold() in row[concepto].casefold() or "travel refund".casefold() in row[concepto].casefold() or "sending org".casefold() in row[concepto].casefold():
-		array[2] = "PI"
+		accounting_matrix[len(accounting_matrix)-1][2] = "PI"
 
-	print(Style.RESET_ALL + Style.DIM, *array, sep = ";''")
-	# for w in array:
-		# print(w + Style.RESET_ALL)
-	data.append(array)
-	if len(extra_array) > 0:
-		for idx, row in enumerate(extra_array):
-			print(Style.RESET_ALL + Style.DIM , *extra_array[idx], sep = ";''")
-			data.append(row)
-	#reset extra array
-	extra_array = []
+	#print(Style.RESET_ALL + Style.DIM, *accounting_matrix[len(accounting_matrix)-1], sep = ";''")
+	#print("end of loop")
+	#print(accounting_matrix[len(accounting_matrix)-1])
+	
+# add accounting matrix elements into a list
+print("add accounting matrix elements into a list")
+print(accounting_matrix)
+for idx, row in enumerate(accounting_matrix):
+	print(Style.RESET_ALL + Style.DIM , *accounting_matrix[idx], sep = ";''")
+	print(idx)
+	print(row)
+	data.append(row)
+
 dictionary.update({"Sheet 1": data})
 save_data(sys.argv[3], dictionary)
 print (Style.RESET_ALL + Style.DIM + '\nOds file has been generated.')

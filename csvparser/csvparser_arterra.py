@@ -297,17 +297,23 @@ for rowNumber, row in enumerate(linesBankEntries[::-1]):
 	#print(ab1_substring_processed_matrix)
 
 	# Loop through ab1 substring processed matrix and create necessary accounting entries
-	total_sum = 0
-	if ab1_substring_processed_matrix != []:
-		# check if sum of quantity elements is correct and throw and exception if not
-		for x in ab1_substring_processed_matrix:
-			total_sum += x[1]
-		#print("total sum")
-		#print(total_sum)
-		#print("importe")
-		#print(float(row['Importe'].replace(',','.').replace('\'','.')))
-		if (total_sum != float(row['Importe'].replace(',','.').replace('\'','.'))):
-				raise Exception('Total sum of quantity elements is not correctly calculated:  {}'.format(row[concepto]))
+	try:
+		total_sum = 0
+		if ab1_substring_processed_matrix != []:
+			# check if sum of quantity elements is correct and throw and exception if not
+			for x in ab1_substring_processed_matrix:
+				total_sum += x[1]
+				total_sum = round(total_sum,2)
+			#print("total sum")
+			#print(total_sum)
+			#print("importe")
+			#print(float(row['Importe'].replace(',','.').replace('\'','.')))
+			if (total_sum != float(row['Importe'].replace(',','.').replace('\'','.'))):
+					raise Exception('Total sum of quantity elements is not correctly calculated: {} {}'.format(date,row[concepto]))
+	except Exception as exception:
+		print(Style.RESET_ALL + Fore.RED + "***********************")
+		logging.error(exception)
+		print(Style.RESET_ALL + Fore.RED + "***********************")
 
 		# rule ab1.fuego.V:XXX.C:YYY.P:ZZZ.I:ZZZ.E:ZZZ.F:ZZZ.D:ZZZ.S:ZZZ.B:ZZZ.G:ZZZ
 		# V stands for vivienda
@@ -321,60 +327,60 @@ for rowNumber, row in enumerate(linesBankEntries[::-1]):
 		# B for Bote Comedor
 		# G for Grupo de Consumo
 		
-		#print("loop through ab1 substring processed matrix elements")
-		initialIndex = len(accounting_matrix)-1
-		index = initialIndex
-		for letter, value in ab1_substring_processed_matrix:
-			if index > initialIndex:
-				#print("accounting_matrix initial index")
-				#print(initialIndex)
-				#print(accounting_matrix[initialIndex])
-				new_accounting_element = accounting_matrix[len(accounting_matrix)-1].copy()  # Create a copy of the last element
-				accounting_matrix.append(new_accounting_element)
-				#print("accounting_matrix current index")
-				#print(len(accounting_matrix)-1)
-				#print(accounting_matrix[len(accounting_matrix)-1])
-			
-			if letter == "v" : #vivienda
-				accounting_matrix[index][2] = "Gasto"
-				accounting_matrix[index][4] = "Cuotas vivienda"
-			elif letter == "c" : #comedor
-				accounting_matrix[index][2] = "Comedor"
-				accounting_matrix[index][4] = "Cuotas comedor"
-			elif letter == "p" : #proyectos
-				accounting_matrix[index][2] = "Gasto"
-				accounting_matrix[index][4] = "Cuotas proyectos"
-			elif letter == "i": #cuota integración
-				accounting_matrix[index][2] = "Inversión"
-				accounting_matrix[index][4] = "Inversión entrada a integración"
-			elif letter == "e" : #almuerzos
-				accounting_matrix[index][2] = "Comedor"
-				accounting_matrix[index][4] = "Almuerzos"
-			elif letter == "f": #Fondo solidaridad 
-				accounting_matrix[index][2] = "Inversión"
-				accounting_matrix[index][4] = "Fondo Solidaridad Arterrana"
-			elif letter == "d": #donación
-				accounting_matrix[index][2] = "Inversión"
-				accounting_matrix[index][4] = "Donación"
-			elif letter == "s": #Visita Participativa vivienda
-				accounting_matrix[index][2] = "Gasto"
-				accounting_matrix[index][4] = "Cuotas visitas participativas"
-			elif letter == "b": #Bote Comedor
-				accounting_matrix[index][2] = "Comedor"
-				accounting_matrix[index][4] = "Botes"
-			elif letter == "g": #Grupo de Consumo
-				accounting_matrix[index][2] = "Comedor"
-				accounting_matrix[index][4] = "Grupo de Consumo"
-			
-			#add the value to the corresponding column
-			if value > 0:
-				accounting_matrix[index][9] = value
-			else:
-				accounting_matrix[index][10] = value
-			#print("index and row")
-			#print(index)
-			#print(accounting_matrix[index])
-			index += 1
+	#print("loop through ab1 substring processed matrix elements")
+	initialIndex = len(accounting_matrix)-1
+	index = initialIndex
+	for letter, value in ab1_substring_processed_matrix:
+		if index > initialIndex:
+			#print("accounting_matrix initial index")
+			#print(initialIndex)
+			#print(accounting_matrix[initialIndex])
+			new_accounting_element = accounting_matrix[len(accounting_matrix)-1].copy()  # Create a copy of the last element
+			accounting_matrix.append(new_accounting_element)
+			#print("accounting_matrix current index")
+			#print(len(accounting_matrix)-1)
+			#print(accounting_matrix[len(accounting_matrix)-1])
+		
+		if letter == "v" : #vivienda
+			accounting_matrix[index][2] = "Gasto"
+			accounting_matrix[index][4] = "Cuotas vivienda"
+		elif letter == "c" : #comedor
+			accounting_matrix[index][2] = "Comedor"
+			accounting_matrix[index][4] = "Cuotas comedor"
+		elif letter == "p" : #proyectos
+			accounting_matrix[index][2] = "Gasto"
+			accounting_matrix[index][4] = "Cuotas proyectos"
+		elif letter == "i": #cuota integración
+			accounting_matrix[index][2] = "Inversión"
+			accounting_matrix[index][4] = "Inversión entrada a integración"
+		elif letter == "e" : #almuerzos
+			accounting_matrix[index][2] = "Comedor"
+			accounting_matrix[index][4] = "Almuerzos"
+		elif letter == "f": #Fondo solidaridad 
+			accounting_matrix[index][2] = "Inversión"
+			accounting_matrix[index][4] = "Fondo Solidaridad Arterrana"
+		elif letter == "d": #donación
+			accounting_matrix[index][2] = "Inversión"
+			accounting_matrix[index][4] = "Donación"
+		elif letter == "s": #Visita Participativa vivienda
+			accounting_matrix[index][2] = "Gasto"
+			accounting_matrix[index][4] = "Cuotas visitas participativas"
+		elif letter == "b": #Bote Comedor
+			accounting_matrix[index][2] = "Comedor"
+			accounting_matrix[index][4] = "Botes"
+		elif letter == "g": #Grupo de Consumo
+			accounting_matrix[index][2] = "Comedor"
+			accounting_matrix[index][4] = "Grupo de Consumo"
+		
+		#add the value to the corresponding column
+		if value > 0:
+			accounting_matrix[index][9] = value
+		else:
+			accounting_matrix[index][10] = value
+		#print("index and row")
+		#print(index)
+		#print(accounting_matrix[index])
+		index += 1
 	#print("accounting matrix after ab1 loop")
 	#print(accounting_matrix)
 
@@ -454,18 +460,18 @@ for rowNumber, row in enumerate(linesBankEntries[::-1]):
 		exec(if_statement)
 		# Code to execute if any condition is true
 		if condition_was_true:
-			print("The set of conditions is true.")
+			#print("The set of conditions is true.")
 			counter = 0
 			for output in rule['outputs']:
 				if counter > 0:
 					new_accounting_element = accounting_matrix[len(accounting_matrix)-1].copy()  # Create a copy of the last element
 					accounting_matrix.append(new_accounting_element)
-				print(output)
+				#print(output)
 				if output['caja'] != "":  accounting_matrix[len(accounting_matrix)-1][2] = output['caja']
 				if output['circulo'] != "":  accounting_matrix[len(accounting_matrix)-1][4] = output['circulo']
 				if output['notas'] != "":  accounting_matrix[len(accounting_matrix)-1][11] = output['notas']
 				counter += 1
-				print(accounting_matrix[len(accounting_matrix)-1])
+				#print(accounting_matrix[len(accounting_matrix)-1])
 
 	#print(Style.RESET_ALL + Style.DIM, *accounting_matrix[len(accounting_matrix)-1], sep = ";''")
 	#print("end of loop")

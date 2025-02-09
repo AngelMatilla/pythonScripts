@@ -488,7 +488,7 @@ for idx, row in enumerate(accounting_matrix):
 	data.append(row)
 
 dictionary.update({"Sheet 1": data})
-save_data(sys.argv[4], dictionary)
+save_data(sys.argv[4], dictionary, encoding='utf-8')
 print (Style.RESET_ALL + Style.DIM + '\nOds file has been generated.')
 print("csvparser done")
 

@@ -50,13 +50,14 @@ if len(sys.argv) != 5:
 	print (Style.RESET_ALL + Fore.RED + "Incorrect number of arguments:\nThe correct usage is csvparser.py inputfilebankentries.csv configuration.csv additional-rules.json outputfile.ods\noutputfile.ods will be created if it doesn't exist")
 	exit()
 if '.csv' in sys.argv[1]:
-	readerBankEntries = csv.DictReader(open(sys.argv[1]))
-	linesBankEntries = [x for x in readerBankEntries]
+	with open(sys.argv[1], newline='', encoding='utf-8') as csvfile:
+		readerBankEntries = csv.DictReader(csvfile)
+		linesBankEntries = [x for x in readerBankEntries]
 else:
 	print (Style.RESET_ALL + Fore.RED + "Please enter a csv formatted file as input for the bank entries (with extension .csv)")
 	exit()
 if '.csv' in sys.argv[2]:
-	with open(sys.argv[2], newline='') as csvfileConfig:
+	with open(sys.argv[2], newline='', encoding='utf-8') as csvfileConfig:
 		readerConfig = csv.reader(csvfileConfig, delimiter=',', quotechar='|')
 		linesConfig = [y for y in readerConfig]
 else:
